@@ -4,6 +4,7 @@ import StatusBadge from "@/components/StatusBadge";
 type QCSubmission = {
   id: number;
   jobId: string;
+  accountNumber?: string;
   address: string;
   status: string;
   tapImage?: string | null;
@@ -21,10 +22,10 @@ export default function QCSubmissionCard({ submission }: {
   isReadOnly?: boolean;
 }) {
   const images = [
-    ["Tap", submission.tapImage],
-    ["Ground Block", submission.groundBlockImage],
-    ["Bonding", submission.bondingImage],
-    ["House", submission.houseImage],
+    ["Onsite photo 1", submission.tapImage],
+    ["Onsite photo 2", submission.groundBlockImage],
+    ["Onsite photo 3", submission.bondingImage],
+    ["Onsite photo 4", submission.houseImage],
     ["Job Screenshot", submission.jobScreenshot],
   ].filter(([, url]) => Boolean(url));
 
@@ -35,7 +36,7 @@ export default function QCSubmissionCard({ submission }: {
           <CardTitle className="text-lg">Job: {submission.jobId}</CardTitle>
           <StatusBadge status={submission.status} />
         </div>
-        <p className="text-sm text-muted-foreground">{submission.address}</p>
+        <p className="text-sm text-muted-foreground">Account {submission.accountNumber || submission.address}</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">

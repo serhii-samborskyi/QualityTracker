@@ -306,6 +306,7 @@ export const getQCImagesByJobAndTechnician = async (jobId: string, technicianId:
     return data as {
       id: number;
       jobId: string;
+      accountNumber?: string;
       technicianId: number;
       tapImage: string;
       groundBlockImage: string;

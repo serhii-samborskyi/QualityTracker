@@ -165,20 +165,20 @@ export default function APITestPage() {
               {result.tapImage && (
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Tap Image</h3>
+                    <h3 className="text-lg font-semibold mb-2">Onsite Photo 1</h3>
                     <img 
                       src={result.tapImage} 
-                      alt="Tap" 
+                      alt="Onsite photo 1" 
                       className="rounded-md border border-gray-200 max-h-64 object-contain"
                     />
                   </div>
                   
                   {result.groundBlockImage && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Ground Block Image</h3>
+                      <h3 className="text-lg font-semibold mb-2">Onsite Photo 2</h3>
                       <img 
                         src={result.groundBlockImage} 
-                        alt="Ground Block" 
+                        alt="Onsite photo 2" 
                         className="rounded-md border border-gray-200 max-h-64 object-contain"
                       />
                     </div>
@@ -186,10 +186,10 @@ export default function APITestPage() {
                   
                   {result.bondingImage && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Bonding Image</h3>
+                      <h3 className="text-lg font-semibold mb-2">Onsite Photo 3</h3>
                       <img 
                         src={result.bondingImage} 
-                        alt="Bonding" 
+                        alt="Onsite photo 3" 
                         className="rounded-md border border-gray-200 max-h-64 object-contain"
                       />
                     </div>
@@ -197,10 +197,10 @@ export default function APITestPage() {
                   
                   {result.houseImage && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">House Image</h3>
+                      <h3 className="text-lg font-semibold mb-2">Onsite Photo 4</h3>
                       <img 
                         src={result.houseImage} 
-                        alt="House" 
+                        alt="Onsite photo 4" 
                         className="rounded-md border border-gray-200 max-h-64 object-contain"
                       />
                     </div>

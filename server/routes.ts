@@ -547,17 +547,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     async (req, res) => {
       try {
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-        const isApartment = req.body.isApartment === 'true';
-        
-        // Check required images
-        if (!files.tapImage || !files.houseImage || !files.jobScreenshot) {
-          return res.status(400).json({ message: "Tap image, house image, and job screenshot are required" });
+        const jobId = String(req.body.jobId || "").trim();
+        const accountNumber = String(req.body.accountNumber || "").trim();
+
+        if (!jobId || !accountNumber) {
+          return res.status(400).json({ message: "Job number and account number are required" });
         }
-        
-        // For regular installations (not apartments), require ground block and bonding
-        if (!isApartment && (!files.groundBlockImage || !files.bondingImage)) {
-          return res.status(400).json({ 
-            message: "Ground block and bonding images are required for non-apartment installations" 
+
+        const requiredImageFields = [
+          "jobScreenshot",
+          "tapImage",
+          "groundBlockImage",
+          "bondingImage",
+          "houseImage",
+        ];
+        const missingImages = requiredImageFields.filter((field) => !files[field]?.[0]);
+
+        if (missingImages.length > 0) {
+          return res.status(400).json({
+            message: "One uploaded screenshot and four onsite camera photos are required",
+            missingImages,
           });
         }
         
@@ -566,41 +575,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "No active QC period found" });
         }
         
-        // Create submission data with required fields
-        const submissionData: any = {
+        const submissionData = {
           technicianId: (req as any).user.id,
           periodId: currentPeriod.id,
-          jobId: req.body.jobId,
-          address: req.body.address,
+          jobId,
+          accountNumber,
+          address: accountNumber,
           tapImage: `/uploads/${files.tapImage[0].filename}`,
+          groundBlockImage: `/uploads/${files.groundBlockImage[0].filename}`,
+          bondingImage: `/uploads/${files.bondingImage[0].filename}`,
           houseImage: `/uploads/${files.houseImage[0].filename}`,
-          jobScreenshot: `/uploads/${files.jobScreenshot[0].filename}`
+          jobScreenshot: `/uploads/${files.jobScreenshot[0].filename}`,
         };
         
-        // Add optional fields if present
-        if (files.groundBlockImage) {
-          submissionData.groundBlockImage = `/uploads/${files.groundBlockImage[0].filename}`;
-        }
-        
-        if (files.bondingImage) {
-          submissionData.bondingImage = `/uploads/${files.bondingImage[0].filename}`;
-        }
-        
         console.log('About to validate submission data:', submissionData);
-
-        // Explicitly set to null (which will be stored as NULL in the database)
-        // if the field is missing and it's an apartment installation
-        if (isApartment) {
-          if (!submissionData.groundBlockImage || submissionData.groundBlockImage === "undefined") {
-            submissionData.groundBlockImage = null;
-            console.log('Setting groundBlockImage to null for apartment installation');
-          }
-          
-          if (!submissionData.bondingImage || submissionData.bondingImage === "undefined") {
-            submissionData.bondingImage = null;
-            console.log('Setting bondingImage to null for apartment installation');
-          }
-        }
         
         const validatedData = insertQCSubmissionSchema.parse(submissionData);
         console.log('Validated data:', validatedData);
@@ -1143,6 +1131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const imageUrls = {
         id: submission.id,
         jobId: submission.jobId,
+        accountNumber: submission.accountNumber || submission.address,
         technicianId: submission.technicianId,
         tapImageUrl: getAbsoluteUrl(submission.tapImage),
         groundBlockImageUrl: getAbsoluteUrl(submission.groundBlockImage),
@@ -1199,6 +1188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const imageUrls = {
         id: submission.id,
         jobId: submission.jobId,
+        accountNumber: submission.accountNumber || submission.address,
         technicianId: submission.technicianId,
         tapImageUrl: getAbsoluteUrl(submission.tapImage),
         groundBlockImageUrl: getAbsoluteUrl(submission.groundBlockImage),

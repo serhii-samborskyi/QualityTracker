@@ -42,10 +42,11 @@ export const qcSubmissions = pgTable("qc_submissions", {
     .notNull()
     .references(() => qcPeriods.id),
   jobId: text("job_id").notNull(),
+  accountNumber: text("account_number").notNull(),
   address: text("address").notNull(),
   tapImage: text("tap_image").notNull(),
-  groundBlockImage: text("ground_block_image"),
-  bondingImage: text("bonding_image"),
+  groundBlockImage: text("ground_block_image").notNull(),
+  bondingImage: text("bonding_image").notNull(),
   houseImage: text("house_image").notNull(),
   jobScreenshot: text("job_screenshot").notNull(),
   status: text("status").notNull().default("pending"),

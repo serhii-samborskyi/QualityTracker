@@ -39,10 +39,11 @@ export async function ensureDatabaseSchema() {
       technician_id INTEGER NOT NULL REFERENCES users(id),
       period_id INTEGER NOT NULL REFERENCES qc_periods(id),
       job_id TEXT NOT NULL,
+      account_number TEXT NOT NULL,
       address TEXT NOT NULL,
       tap_image TEXT NOT NULL,
-      ground_block_image TEXT,
-      bonding_image TEXT,
+      ground_block_image TEXT NOT NULL,
+      bonding_image TEXT NOT NULL,
       house_image TEXT NOT NULL,
       job_screenshot TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
@@ -59,5 +60,31 @@ export async function ensureDatabaseSchema() {
     CREATE INDEX IF NOT EXISTS qc_submissions_technician_id_idx ON qc_submissions(technician_id);
     CREATE INDEX IF NOT EXISTS qc_submissions_period_id_idx ON qc_submissions(period_id);
     CREATE INDEX IF NOT EXISTS qc_submissions_status_idx ON qc_submissions(status);
+  `);
+
+  await pool.query(`
+    ALTER TABLE qc_submissions
+      ADD COLUMN IF NOT EXISTS account_number TEXT;
+
+    UPDATE qc_submissions
+      SET account_number = address
+      WHERE account_number IS NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN account_number SET NOT NULL;
+
+    UPDATE qc_submissions
+      SET ground_block_image = ''
+      WHERE ground_block_image IS NULL;
+
+    UPDATE qc_submissions
+      SET bonding_image = ''
+      WHERE bonding_image IS NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN ground_block_image SET NOT NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN bonding_image SET NOT NULL;
   `);
 }

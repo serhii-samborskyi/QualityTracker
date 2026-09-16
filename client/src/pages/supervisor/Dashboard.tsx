@@ -69,10 +69,10 @@ export default function Dashboard() {
     
     // Create an array of images from the QC submission
     const images = [
-      { title: 'Tap', url: qc.tapImage },
-      { title: 'Ground Block', url: qc.groundBlockImage },
-      { title: 'Bonding to Meter', url: qc.bondingImage },
-      { title: 'House', url: qc.houseImage }
+      { title: 'Onsite photo 1', url: qc.tapImage },
+      { title: 'Onsite photo 2', url: qc.groundBlockImage },
+      { title: 'Onsite photo 3', url: qc.bondingImage },
+      { title: 'Onsite photo 4', url: qc.houseImage }
     ];
     
     // Set the initial image index based on which thumbnail was clicked
@@ -298,7 +298,7 @@ export default function Dashboard() {
                               'Unknown';
                           })()}
                         </h4>
-                        <p className="mt-1 text-sm text-gray-600">{qc.address}</p>
+                        <p className="mt-1 text-sm text-gray-600">Account #{qc.accountNumber || qc.address}</p>
                         <p className="mt-1 text-xs text-gray-500">
                           Submitted on {new Date(qc.createdAt).toLocaleDateString()}
                         </p>
@@ -320,39 +320,39 @@ export default function Dashboard() {
                     
                     <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Tap</p>
+                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 1</p>
                         <div 
                           className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
                           onClick={() => openImageViewer(qc, 'tap')}
                         >
-                          <img src={qc.tapImage} alt="Tap" className="h-full w-full object-cover" />
+                          <img src={qc.tapImage} alt="Onsite photo 1" className="h-full w-full object-cover" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Ground Block</p>
+                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 2</p>
                         <div 
                           className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
                           onClick={() => openImageViewer(qc, 'groundBlock')}
                         >
-                          <img src={qc.groundBlockImage} alt="Ground Block" className="h-full w-full object-cover" />
+                          <img src={qc.groundBlockImage} alt="Onsite photo 2" className="h-full w-full object-cover" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Bonding to Meter</p>
+                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 3</p>
                         <div 
                           className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
                           onClick={() => openImageViewer(qc, 'bonding')}
                         >
-                          <img src={qc.bondingImage} alt="Bonding to Meter" className="h-full w-full object-cover" />
+                          <img src={qc.bondingImage} alt="Onsite photo 3" className="h-full w-full object-cover" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">House</p>
+                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 4</p>
                         <div 
                           className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
                           onClick={() => openImageViewer(qc, 'house')}
                         >
-                          <img src={qc.houseImage} alt="House" className="h-full w-full object-cover" />
+                          <img src={qc.houseImage} alt="Onsite photo 4" className="h-full w-full object-cover" />
                         </div>
                       </div>
                     </div>

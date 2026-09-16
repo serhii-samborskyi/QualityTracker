@@ -15,6 +15,7 @@ type QCSubmission = {
   technicianId: number;
   periodId: number;
   jobId: string;
+  accountNumber?: string;
   address: string;
   tapImage: string;
   groundBlockImage: string;
@@ -134,13 +135,13 @@ export default function QCReview() {
       const techName = getTechnicianName(qc.technicianId).toLowerCase();
       const techId = qc.technicianId.toString();
       const jobId = qc.jobId.toLowerCase();
-      const address = qc.address.toLowerCase();
+      const accountNumber = (qc.accountNumber || qc.address).toLowerCase();
       
       return (
         techName.includes(query) || 
         techId.includes(query) || 
         jobId.includes(query) || 
-        address.includes(query)
+        accountNumber.includes(query)
       );
     });
   }, [pendingQCsQuery.data, searchQuery, techniciansQuery.data]);
@@ -157,10 +158,10 @@ export default function QCReview() {
   const openImageViewer = (qc: QCSubmission, initialType: string) => {
     // Create an array of images from the QC submission
     const images = [
-      { title: 'Tap', url: qc.tapImage },
-      { title: 'Ground Block', url: qc.groundBlockImage },
-      { title: 'Bonding to Meter', url: qc.bondingImage },
-      { title: 'House', url: qc.houseImage },
+      { title: 'Onsite photo 1', url: qc.tapImage },
+      { title: 'Onsite photo 2', url: qc.groundBlockImage },
+      { title: 'Onsite photo 3', url: qc.bondingImage },
+      { title: 'Onsite photo 4', url: qc.houseImage },
       { title: 'Job Screenshot', url: qc.jobScreenshot }
     ];
     
@@ -274,7 +275,7 @@ export default function QCReview() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by tech name, job ID, tech ID, or address..."
+                    placeholder="Search by tech name, job number, tech ID, or account number..."
                     className="pl-10 pr-4 py-2 w-full focus:ring-primary-500 focus:border-primary-500"
                     autoFocus
                   />
@@ -322,7 +323,7 @@ export default function QCReview() {
                             <h4 className="text-sm font-medium text-blue-600 dark:text-blue-400 truncate">
                               Job #{qc.jobId} - {getTechnicianName(qc.technicianId)}
                             </h4>
-                            <p className="mt-1 text-sm text-gray-500">{qc.address}</p>
+                            <p className="mt-1 text-sm text-gray-500">Account #{qc.accountNumber || qc.address}</p>
                             <p className="mt-1 text-xs text-gray-500">
                               Submitted on {formatDate(qc.createdAt)}
                             </p>
@@ -350,39 +351,39 @@ export default function QCReview() {
                         
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
                           <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Tap</p>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 1</p>
                             <div 
                               className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
                               onClick={() => openImageViewer(qc, 'tap')}
                             >
-                              <img src={qc.tapImage} alt="Tap" className="h-full w-full object-cover" />
+                              <img src={qc.tapImage} alt="Onsite photo 1" className="h-full w-full object-cover" />
                             </div>
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Ground Block</p>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 2</p>
                             <div 
                               className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
                               onClick={() => openImageViewer(qc, 'groundBlock')}
                             >
-                              <img src={qc.groundBlockImage} alt="Ground Block" className="h-full w-full object-cover" />
+                              <img src={qc.groundBlockImage} alt="Onsite photo 2" className="h-full w-full object-cover" />
                             </div>
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Bonding to Meter</p>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 3</p>
                             <div 
                               className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
                               onClick={() => openImageViewer(qc, 'bonding')}
                             >
-                              <img src={qc.bondingImage} alt="Bonding to Meter" className="h-full w-full object-cover" />
+                              <img src={qc.bondingImage} alt="Onsite photo 3" className="h-full w-full object-cover" />
                             </div>
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">House</p>
+                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 4</p>
                             <div 
                               className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
                               onClick={() => openImageViewer(qc, 'house')}
                             >
-                              <img src={qc.houseImage} alt="House" className="h-full w-full object-cover" />
+                              <img src={qc.houseImage} alt="Onsite photo 4" className="h-full w-full object-cover" />
                             </div>
                           </div>
                         </div>

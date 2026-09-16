@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getTechnicianQCSubmissionsById } from "@/lib/api";
 import { getTechnicians } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, FileCheck, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Calendar, Hash, FileCheck, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +16,7 @@ interface QCSubmission {
   technicianId: number;
   periodId: number;
   jobId: string;
+  accountNumber?: string;
   address: string;
   status: string;
   tapImage: string;
@@ -71,10 +72,10 @@ export default function TechnicianQCSubmissions() {
   // Function to view images for a submission
   const viewImages = (submission: QCSubmission, initialImageIndex: number = 0) => {
     const images = [
-      { title: "Tap", url: submission.tapImage },
-      { title: "Ground Block", url: submission.groundBlockImage },
-      { title: "Bonding", url: submission.bondingImage },
-      { title: "House", url: submission.houseImage },
+      { title: "Onsite photo 1", url: submission.tapImage },
+      { title: "Onsite photo 2", url: submission.groundBlockImage },
+      { title: "Onsite photo 3", url: submission.bondingImage },
+      { title: "Onsite photo 4", url: submission.houseImage },
       { title: "Job Screenshot", url: submission.jobScreenshot },
     ];
     
@@ -302,27 +303,27 @@ function SubmissionCard({
           <StatusBadge status={submission.status} />
         </div>
         <CardDescription className="flex items-center gap-1">
-          <MapPin className="h-3 w-3" />
-          {submission.address}
+          <Hash className="h-3 w-3" />
+          Account {submission.accountNumber || submission.address}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 px-6">
         <div className="grid grid-cols-5 gap-1 mb-2">
           <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
             onClick={() => viewImages(submission, 0)}>
-            <img src={submission.tapImage} alt="Tap" className="w-full h-full object-cover hover:opacity-90 transition" />
+            <img src={submission.tapImage} alt="Onsite photo 1" className="w-full h-full object-cover hover:opacity-90 transition" />
           </div>
           <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
             onClick={() => viewImages(submission, 1)}>
-            <img src={submission.groundBlockImage} alt="Ground Block" className="w-full h-full object-cover hover:opacity-90 transition" />
+            <img src={submission.groundBlockImage} alt="Onsite photo 2" className="w-full h-full object-cover hover:opacity-90 transition" />
           </div>
           <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
             onClick={() => viewImages(submission, 2)}>
-            <img src={submission.bondingImage} alt="Bonding" className="w-full h-full object-cover hover:opacity-90 transition" />
+            <img src={submission.bondingImage} alt="Onsite photo 3" className="w-full h-full object-cover hover:opacity-90 transition" />
           </div>
           <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
             onClick={() => viewImages(submission, 3)}>
-            <img src={submission.houseImage} alt="House" className="w-full h-full object-cover hover:opacity-90 transition" />
+            <img src={submission.houseImage} alt="Onsite photo 4" className="w-full h-full object-cover hover:opacity-90 transition" />
           </div>
           <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
             onClick={() => viewImages(submission, 4)}>

@@ -2,15 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
-  Building2,
   Camera,
   CheckCircle2,
   FileImage,
   Hash,
-  Home,
   ImagePlus,
   Loader2,
-  MapPin,
   RotateCcw,
   UploadCloud,
   X,
@@ -29,6 +26,7 @@ type ImageField = {
   key: "tapImage" | "groundBlockImage" | "bondingImage" | "houseImage" | "jobScreenshot";
   title: string;
   description: string;
+  source: "camera" | "gallery";
 };
 
 type PreparedImage = {
@@ -42,25 +40,19 @@ type PreparedImage = {
 };
 
 const imageFields: ImageField[] = [
-  { key: "tapImage", title: "Tap", description: "Clear photo of the tap connection" },
-  { key: "groundBlockImage", title: "Ground block", description: "Ground block and connections" },
-  { key: "bondingImage", title: "Bonding", description: "Bonding to meter or approved point" },
-  { key: "houseImage", title: "House", description: "Wide house/exterior reference" },
-  { key: "jobScreenshot", title: "Job screenshot", description: "Screenshot showing job details" },
+  { key: "jobScreenshot", title: "Job screenshot", description: "Upload the screenshot from the gallery", source: "gallery" },
+  { key: "tapImage", title: "Onsite photo 1", description: "Take this photo onsite with the camera", source: "camera" },
+  { key: "groundBlockImage", title: "Onsite photo 2", description: "Take this photo onsite with the camera", source: "camera" },
+  { key: "bondingImage", title: "Onsite photo 3", description: "Take this photo onsite with the camera", source: "camera" },
+  { key: "houseImage", title: "Onsite photo 4", description: "Take this photo onsite with the camera", source: "camera" },
 ];
+
+const onsiteImageFields = imageFields.filter((field) => field.source === "camera");
 
 function formatBytes(bytes: number) {
   if (!bytes) return "0 KB";
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function isFieldRequired(field: ImageField, isApartment: boolean) {
-  if (field.key === "groundBlockImage" || field.key === "bondingImage") {
-    return !isApartment;
-  }
-
-  return true;
 }
 
 async function compressImage(file: File): Promise<File> {
@@ -111,8 +103,7 @@ async function compressImage(file: File): Promise<File> {
 export default function TechnicianDashboard() {
   const { toast } = useToast();
   const [jobId, setJobId] = useState("");
-  const [address, setAddress] = useState("");
-  const [isApartment, setIsApartment] = useState(false);
+  const [accountNumber, setAccountNumber] = useState("");
   const [images, setImages] = useState<Partial<Record<ImageField["key"], PreparedImage>>>({});
   const [formKey, setFormKey] = useState(0);
 
@@ -127,11 +118,13 @@ export default function TechnicianDashboard() {
   });
 
   const requiredMissing = useMemo(
-    () => imageFields.filter((field) => isFieldRequired(field, isApartment) && !images[field.key]?.file),
-    [images, isApartment],
+    () => imageFields.filter((field) => !images[field.key]?.file),
+    [images],
   );
 
   const isCompressing = Object.values(images).some((image) => image?.isCompressing);
+  const onsiteReadyCount = onsiteImageFields.filter((field) => images[field.key]?.file).length;
+  const screenshotReady = Boolean(images.jobScreenshot?.file);
   const compressionSaved = Object.values(images).reduce((total, image) => {
     if (!image) return total;
     return total + Math.max(0, image.originalSize - image.compressedSize);
@@ -210,8 +203,7 @@ export default function TechnicianDashboard() {
       if (image?.previewUrl) URL.revokeObjectURL(image.previewUrl);
     });
     setJobId("");
-    setAddress("");
-    setIsApartment(false);
+    setAccountNumber("");
     setImages({});
     setFormKey((key) => key + 1);
   };
@@ -220,8 +212,7 @@ export default function TechnicianDashboard() {
     mutationFn: async () => {
       const formData = new FormData();
       formData.append("jobId", jobId.trim());
-      formData.append("address", address.trim());
-      formData.append("isApartment", String(isApartment));
+      formData.append("accountNumber", accountNumber.trim());
 
       imageFields.forEach((field) => {
         const image = images[field.key];
@@ -250,7 +241,7 @@ export default function TechnicianDashboard() {
     },
   });
 
-  const canSubmit = jobId.trim() && address.trim() && requiredMissing.length === 0 && !isCompressing && !submitMutation.isPending;
+  const canSubmit = jobId.trim() && accountNumber.trim() && requiredMissing.length === 0 && !isCompressing && !submitMutation.isPending;
   const progress = progressQuery.data;
   const recentSubmissions = (submissionsQuery.data ?? []).slice(0, 4);
 
@@ -295,8 +286,12 @@ export default function TechnicianDashboard() {
                 <span className="font-medium">{formatBytes(compressionSaved)}</span>
               </div>
               <div className="flex items-center justify-between rounded-md bg-gray-100 px-3 py-2 text-sm">
-                <span>Install type</span>
-                <Badge variant="outline">{isApartment ? "Apartment" : "Standard"}</Badge>
+                <span>Screenshot</span>
+                <Badge variant={screenshotReady ? "default" : "outline"}>{screenshotReady ? "Ready" : "Missing"}</Badge>
+              </div>
+              <div className="flex items-center justify-between rounded-md bg-gray-100 px-3 py-2 text-sm">
+                <span>Onsite photos</span>
+                <Badge variant="outline">{onsiteReadyCount} / {onsiteImageFields.length}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -315,7 +310,7 @@ export default function TechnicianDashboard() {
               <div className="space-y-2">
                 <Label htmlFor="jobId" className="flex items-center gap-2">
                   <Hash className="h-4 w-4 text-blue-600" />
-                  Job ID
+                  Job Number
                 </Label>
                 <Input
                   id="jobId"
@@ -326,44 +321,22 @@ export default function TechnicianDashboard() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-blue-600" />
-                  Address
+                <Label htmlFor="accountNumber" className="flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-blue-600" />
+                  Account Number
                 </Label>
                 <Input
-                  id="address"
-                  value={address}
-                  onChange={(event) => setAddress(event.target.value)}
-                  placeholder="Installation address"
+                  id="accountNumber"
+                  value={accountNumber}
+                  onChange={(event) => setAccountNumber(event.target.value)}
+                  placeholder="Enter account number"
                   className="h-12 bg-white"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 rounded-lg border border-blue-100 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <div className="rounded-md bg-blue-600 p-2 text-white">
-                  {isApartment ? <Building2 className="h-5 w-5" /> : <Home className="h-5 w-5" />}
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">Apartment installation</p>
-                  <p className="text-sm text-gray-600">Ground block and bonding photos become optional for apartment jobs.</p>
-                </div>
-              </div>
-              <label className="inline-flex cursor-pointer items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={isApartment}
-                  onChange={(event) => setIsApartment(event.target.checked)}
-                  className="h-5 w-5 rounded border-gray-300"
-                />
-                <span className="text-sm font-medium text-gray-800">{isApartment ? "Apartment" : "Standard"}</span>
-              </label>
-            </div>
-
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {imageFields.map((field) => {
-                const required = isFieldRequired(field, isApartment);
                 const image = images[field.key];
 
                 return (
@@ -372,7 +345,8 @@ export default function TechnicianDashboard() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-semibold text-gray-900">{field.title}</h3>
-                          <Badge variant={required ? "default" : "outline"}>{required ? "Required" : "Optional"}</Badge>
+                          <Badge variant="default">Required</Badge>
+                          <Badge variant="outline">{field.source === "camera" ? "Camera only" : "Gallery upload"}</Badge>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">{field.description}</p>
                       </div>
@@ -423,11 +397,14 @@ export default function TechnicianDashboard() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">Choose image</p>
-                          <p className="text-xs text-gray-500">JPG, PNG, or SVG up to 10 MB</p>
+                          <p className="text-xs text-gray-500">
+                            {field.source === "camera" ? "Camera capture up to 10 MB" : "JPG, PNG, or SVG up to 10 MB"}
+                          </p>
                         </div>
                         <input
                           type="file"
                           accept="image/*"
+                          capture={field.source === "camera" ? "environment" : undefined}
                           className="sr-only"
                           onChange={(event) => {
                             const file = event.target.files?.[0];
@@ -480,7 +457,7 @@ export default function TechnicianDashboard() {
                   <div key={submission.id} className="flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white p-4">
                     <div className="min-w-0">
                       <p className="truncate font-medium text-gray-900">Job {submission.jobId}</p>
-                      <p className="truncate text-sm text-gray-500">{submission.address}</p>
+                      <p className="truncate text-sm text-gray-500">Account {submission.accountNumber || submission.address}</p>
                     </div>
                     <StatusBadge status={submission.status} />
                   </div>

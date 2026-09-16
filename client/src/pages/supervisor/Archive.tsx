@@ -54,6 +54,7 @@ type QCSubmission = {
   technicianId: number;
   periodId: number;
   jobId: string;
+  accountNumber?: string;
   address: string;
   status: string;
   supervisorComment?: string;
