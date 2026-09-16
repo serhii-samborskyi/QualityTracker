@@ -187,6 +187,18 @@ export const addStatusIcon = async (formData: FormData) => {
 };
 
 // OneSignal API
+export const getOneSignalConfig = async () => {
+  const response = await fetch("/api/config/onesignal", {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get OneSignal configuration");
+  }
+
+  return response.json() as Promise<{ appId: string; enabled: boolean }>;
+};
+
 export const saveOneSignalToken = async (token: string) => {
   const response = await apiRequest("POST", "/api/settings/onesignal", { token });
   return response.json();
@@ -205,6 +217,16 @@ export const removeOneSignalSubscription = async () => {
   if (!response.ok) {
     throw new Error("Failed to remove OneSignal subscription");
   }
+  return response.json();
+};
+
+export const subscribeOneSignalToken = async (token: string) => {
+  const response = await apiRequest("POST", "/api/settings/onesignal/subscribe", { token });
+  return response.json();
+};
+
+export const unsubscribeOneSignalToken = async () => {
+  const response = await apiRequest("POST", "/api/settings/onesignal/unsubscribe", {});
   return response.json();
 };
 

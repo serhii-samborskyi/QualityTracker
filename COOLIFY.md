@@ -16,9 +16,9 @@ This project is ready to deploy as a Dockerfile-based application in Coolify.
    - `UPLOAD_DIR`: `/app/qualitytracker-uploads`
    - `SUPERVISOR_REGISTRATION_ENABLED`: optional, set to `true` only while recovering/creating a supervisor
    - `SUPERVISOR_REGISTRATION_CODE`: optional secret code required for recovery registration when a supervisor already exists
-   - `ONESIGNAL_APP_ID`: optional
-   - `ONESIGNAL_API_KEY`: optional
-   - `VITE_ONESIGNAL_APP_ID`: optional
+   - `ONESIGNAL_APP_ID`: optional, OneSignal public app id for browser subscriptions
+   - `ONESIGNAL_API_KEY`: optional, OneSignal REST API key for sending push notifications
+   - `VITE_ONESIGNAL_APP_ID`: optional legacy fallback; `ONESIGNAL_APP_ID` is enough for new deploys
 7. Deploy.
 
 ## Database Schema

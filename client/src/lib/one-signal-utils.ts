@@ -5,7 +5,7 @@
 // Define types for OneSignal
 declare global {
   interface Window {
-    OneSignal: {
+    OneSignal: any & {
       // Existing methods
       push: (callback: () => void) => void;
       isPushNotificationsEnabled: (callback: (isEnabled: boolean) => void) => void;
@@ -26,6 +26,9 @@ declare global {
     
     // Add to disable popups
     __ONESIGNAL_DISABLE_PROMPTS: boolean;
+    OneSignalDeferred?: Array<(oneSignal: any) => void | Promise<void>>;
+    __QUALITY_TRACKER_ONESIGNAL_APP_ID?: string;
+    __QUALITY_TRACKER_ONESIGNAL_READY?: boolean;
   }
 }
 
@@ -48,6 +51,11 @@ export const isOneSignalAvailable = (): boolean => {
   return typeof window !== 'undefined' && 'OneSignal' in window;
 };
 
+const getOneSignal = () => {
+  if (!isOneSignalAvailable()) return null;
+  return window.OneSignal as any;
+};
+
 /**
  * Get the current OneSignal subscription status directly from the browser
  * @returns Promise<OneSignalStatus>
@@ -58,6 +66,19 @@ export const getOneSignalStatus = async (): Promise<OneSignalStatus> => {
   }
 
   try {
+    const oneSignal = getOneSignal();
+    const pushSubscription = oneSignal?.User?.PushSubscription;
+
+    if (pushSubscription) {
+      const token = pushSubscription.id || pushSubscription.token;
+      const optedIn = Boolean(pushSubscription.optedIn ?? token);
+      return {
+        isSubscribed: optedIn && Boolean(token),
+        userId: token,
+        token,
+      };
+    }
+
     // Get subscription status
     const isSubscribed = await new Promise<boolean>((resolve) => {
       window.OneSignal.isPushNotificationsEnabled((isEnabled: boolean) => {
@@ -95,6 +116,26 @@ export const requestOneSignalPermission = async (): Promise<boolean> => {
   console.log('Requesting OneSignal permission...');
 
   try {
+    const oneSignal = getOneSignal();
+    const pushSubscription = oneSignal?.User?.PushSubscription;
+
+    if (oneSignal?.Notifications?.requestPermission) {
+      window.__ONESIGNAL_DISABLE_PROMPTS = false;
+      const permission = await oneSignal.Notifications.requestPermission();
+      if (permission !== true && permission !== "granted") {
+        window.__ONESIGNAL_DISABLE_PROMPTS = true;
+        return false;
+      }
+
+      if (pushSubscription?.optIn) {
+        await pushSubscription.optIn();
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      window.__ONESIGNAL_DISABLE_PROMPTS = true;
+      return (await getOneSignalStatus()).isSubscribed;
+    }
+
     // Show prompt approach - actually request permissions
     await new Promise<void>((resolve) => {
       window.OneSignal.push(() => {

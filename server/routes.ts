@@ -142,6 +142,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Serve uploaded files
   app.use('/uploads', express.static(uploadDir));
+
+  app.get('/api/config/onesignal', (_req, res) => {
+    const appId = process.env.ONESIGNAL_APP_ID || process.env.VITE_ONESIGNAL_APP_ID || "";
+    res.json({
+      appId,
+      enabled: Boolean(appId),
+    });
+  });
   
   // Authentication routes
   app.get('/api/auth/supervisor-registration-status', async (_req, res) => {
