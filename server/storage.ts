@@ -6,7 +6,7 @@ import {
   users, qcPeriods, qcSubmissions, statusIcons
 } from "@shared/schema";
 import { db, pool } from "./db";
-import { eq, and, desc, gte, lt } from "drizzle-orm";
+import { eq, and, desc, lt } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
@@ -465,16 +465,15 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
     
-    // Get all QC submissions that are pending and within the current period date range
-    const currentPeriodStartDate = new Date(currentPeriod.startDate);
-    
+    // Submissions are assigned to a period at upload time, so use that
+    // relationship instead of recalculating membership from mutable dates.
     return await db
       .select()
       .from(qcSubmissions)
       .where(
         and(
           eq(qcSubmissions.status, 'pending'),
-          gte(qcSubmissions.createdAt, currentPeriodStartDate)
+          eq(qcSubmissions.periodId, currentPeriod.id)
         )
       )
       .orderBy(desc(qcSubmissions.createdAt));
@@ -486,15 +485,13 @@ export class DatabaseStorage implements IStorage {
       const currentPeriod = await this.getCurrentQCPeriod();
       
       if (currentPeriod) {
-        const currentPeriodStartDate = new Date(currentPeriod.startDate);
-        
         return await db
           .select()
           .from(qcSubmissions)
           .where(
             and(
               eq(qcSubmissions.technicianId, technicianId),
-              gte(qcSubmissions.createdAt, currentPeriodStartDate)
+              eq(qcSubmissions.periodId, currentPeriod.id)
             )
           )
           .orderBy(desc(qcSubmissions.createdAt));
