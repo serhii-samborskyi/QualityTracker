@@ -9,6 +9,7 @@ import session from "express-session";
 import express from "express";
 import { 
   loginSchema, 
+  registerSupervisorSchema,
   insertQCPeriodSchema, 
   insertQCSubmissionSchema,
   reviewQCSchema,
@@ -143,6 +144,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/uploads', express.static(uploadDir));
   
   // Authentication routes
+  app.get('/api/auth/supervisor-registration-status', async (_req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      const hasSupervisor = users.some(user => user.role === "supervisor");
+      const recoveryEnabled = process.env.SUPERVISOR_REGISTRATION_ENABLED === "true";
+      const hasRegistrationCode = Boolean(process.env.SUPERVISOR_REGISTRATION_CODE?.trim());
+
+      res.json({
+        enabled: !hasSupervisor || recoveryEnabled,
+        hasSupervisor,
+        requiresCode: hasSupervisor,
+        recoveryEnabled,
+        hasRegistrationCode,
+      });
+    } catch (error) {
+      console.error("Error checking supervisor registration status:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post('/api/auth/register-supervisor', async (req, res) => {
+    try {
+      const registrationData = registerSupervisorSchema.parse(req.body);
+      const users = await storage.getAllUsers();
+      const hasSupervisor = users.some(user => user.role === "supervisor");
+      const recoveryEnabled = process.env.SUPERVISOR_REGISTRATION_ENABLED === "true";
+      const registrationCode = process.env.SUPERVISOR_REGISTRATION_CODE?.trim();
+
+      if (hasSupervisor && !recoveryEnabled) {
+        return res.status(403).json({
+          message: "Supervisor registration is disabled. Enable SUPERVISOR_REGISTRATION_ENABLED to create a recovery supervisor.",
+        });
+      }
+
+      if (hasSupervisor) {
+        if (!registrationCode) {
+          return res.status(403).json({
+            message: "Supervisor recovery registration requires SUPERVISOR_REGISTRATION_CODE.",
+          });
+        }
+
+        if (registrationData.registrationCode !== registrationCode) {
+          return res.status(403).json({ message: "Invalid supervisor registration code" });
+        }
+      }
+
+      const existingUser = await storage.getUserByUsername(registrationData.username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      const newSupervisor = await storage.createUser({
+        username: registrationData.username,
+        password: registrationData.password,
+        name: registrationData.name,
+        role: "supervisor",
+        techId: null,
+        oneSignalToken: null,
+      });
+
+      req.session.userId = newSupervisor.id;
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ message: "Supervisor created, but login session could not be saved" });
+        }
+
+        res.status(201).json({
+          id: newSupervisor.id,
+          username: newSupervisor.username,
+          name: newSupervisor.name,
+          role: newSupervisor.role,
+        });
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      console.error("Error registering supervisor:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { username, password } = loginSchema.parse(req.body);

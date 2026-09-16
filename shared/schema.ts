@@ -103,6 +103,19 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const registerSupervisorSchema = z
+  .object({
+    username: z.string().email("Please enter a valid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(8),
+    name: z.string().min(2, "Name must be at least 2 characters long"),
+    registrationCode: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const reviewQCSchema = z.object({
   qcId: z.coerce.number().int().positive(),
   status: z.enum(["approved", "declined"]),

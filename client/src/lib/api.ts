@@ -6,6 +6,35 @@ export const login = async (username: string, password: string) => {
   return response.json();
 };
 
+export const getSupervisorRegistrationStatus = async () => {
+  const response = await fetch("/api/auth/supervisor-registration-status", {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get supervisor registration status");
+  }
+
+  return response.json() as Promise<{
+    enabled: boolean;
+    hasSupervisor: boolean;
+    requiresCode: boolean;
+    recoveryEnabled: boolean;
+    hasRegistrationCode: boolean;
+  }>;
+};
+
+export const registerSupervisor = async (data: {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  registrationCode?: string;
+}) => {
+  const response = await apiRequest("POST", "/api/auth/register-supervisor", data);
+  return response.json();
+};
+
 export const logout = async () => {
   const response = await apiRequest("POST", "/api/auth/logout", {});
   return response.json();

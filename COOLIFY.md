@@ -14,6 +14,8 @@ This project is ready to deploy as a Dockerfile-based application in Coolify.
    - `DATABASE_URL`: the PostgreSQL connection string from Coolify
    - `SESSION_SECRET`: a long random string
    - `UPLOAD_DIR`: `/app/qualitytracker-uploads`
+   - `SUPERVISOR_REGISTRATION_ENABLED`: optional, set to `true` only while recovering/creating a supervisor
+   - `SUPERVISOR_REGISTRATION_CODE`: optional secret code required for recovery registration when a supervisor already exists
    - `ONESIGNAL_APP_ID`: optional
    - `ONESIGNAL_API_KEY`: optional
    - `VITE_ONESIGNAL_APP_ID`: optional
@@ -34,3 +36,14 @@ npm run db:push
 For the public domain in Coolify, point the service to internal port `5000`.
 
 Uploaded files are stored on disk at `/app/qualitytracker-uploads` and served publicly by the app under `/uploads/...`.
+
+## Supervisor Account Recovery
+
+If you cannot log in as a supervisor, temporarily add these environment variables in Coolify and redeploy:
+
+```bash
+SUPERVISOR_REGISTRATION_ENABLED=true
+SUPERVISOR_REGISTRATION_CODE=choose-a-long-one-time-code
+```
+
+Then open the login page, use **Register supervisor**, and enter the same code. After the new supervisor account works, remove or disable `SUPERVISOR_REGISTRATION_ENABLED` and redeploy.
