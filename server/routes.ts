@@ -29,7 +29,7 @@ declare module 'express-session' {
 }
 
 // Configure multer for file uploads
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = process.env.UPLOAD_DIR || path.join(process.cwd(), "qualitytracker-uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

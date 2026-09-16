@@ -7,5 +7,7 @@ client/.env
 cookies.txt
 uploads/*
 !uploads/.gitkeep
+qualitytracker-uploads/*
+!qualitytracker-uploads/.gitkeep
 npm-debug.log*
 .DS_Store

@@ -8,5 +8,7 @@ npm-debug.log*
 .env
 uploads/*
 !uploads/.gitkeep
+qualitytracker-uploads/*
+!qualitytracker-uploads/.gitkeep
 cookies.txt
 *.sample

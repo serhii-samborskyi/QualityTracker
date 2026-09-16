@@ -13,11 +13,12 @@ FROM node:20-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=5000
+ENV UPLOAD_DIR=/app/qualitytracker-uploads
 
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/uploads ./uploads
+RUN mkdir -p /app/qualitytracker-uploads
 
 EXPOSE 5000
 CMD ["node", "dist/index.js"]

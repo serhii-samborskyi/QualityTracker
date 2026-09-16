@@ -9,10 +9,11 @@ This project is ready to deploy as a Dockerfile-based application in Coolify.
 3. Select `Dockerfile` as the build pack.
 4. Set the internal port to `5000`.
 5. Add persistent storage:
-   - Container path: `/app/uploads`
+   - Container path: `/app/qualitytracker-uploads`
 6. Add environment variables:
    - `DATABASE_URL`: the PostgreSQL connection string from Coolify
    - `SESSION_SECRET`: a long random string
+   - `UPLOAD_DIR`: `/app/qualitytracker-uploads`
    - `ONESIGNAL_APP_ID`: optional
    - `ONESIGNAL_API_KEY`: optional
    - `VITE_ONESIGNAL_APP_ID`: optional
@@ -31,3 +32,5 @@ npm run db:push
 `docker-compose.coolify.yml` is included if you prefer Coolify's Docker Compose build pack. It expects the same environment variables and persists uploads in a named volume.
 
 For the public domain in Coolify, point the service to internal port `5000`.
+
+Uploaded files are stored on disk at `/app/qualitytracker-uploads` and served publicly by the app under `/uploads/...`.
