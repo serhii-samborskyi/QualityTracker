@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   Camera,
-  CheckCircle2,
   FileImage,
   Hash,
   ImagePlus,
@@ -37,12 +36,6 @@ type PreparedImage = {
   isCompressing: boolean;
   error?: string;
 };
-
-function formatBytes(bytes: number) {
-  if (!bytes) return "0 KB";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 function createImageId() {
   if (window.crypto?.randomUUID) return window.crypto.randomUUID();
@@ -172,16 +165,10 @@ export default function TechnicianDashboard() {
   const detailsReady = Boolean(jobId.trim() && accountNumber.trim());
   const screenshotReady = Boolean(jobScreenshot?.file);
   const onsiteReadyCount = onsiteImages.length;
-  const minimumReady = onsiteReadyCount >= MIN_ONSITE_PHOTOS;
   const maximumReached = onsiteReadyCount >= MAX_ONSITE_PHOTOS;
   const isCompressing = Boolean(jobScreenshot?.isCompressing) || onsiteImages.some((image) => image.isCompressing);
   const progress = progressQuery.data;
   const recentSubmissions = (submissionsQuery.data ?? []).slice(0, 4);
-
-  const compressionSaved = useMemo(() => {
-    const images = [jobScreenshot, ...onsiteImages].filter(Boolean) as PreparedImage[];
-    return images.reduce((total, image) => total + Math.max(0, image.originalSize - image.compressedSize), 0);
-  }, [jobScreenshot, onsiteImages]);
 
   useEffect(() => {
     screenshotRef.current = jobScreenshot;
@@ -515,59 +502,31 @@ export default function TechnicianDashboard() {
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-emerald-50">
       <div className={`mx-auto ${screenshotReady ? "max-w-md space-y-3 p-3 sm:p-4" : "max-w-6xl space-y-6 p-4 sm:p-6"}`}>
         {!screenshotReady && (
-          <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-            <Card className="overflow-hidden rounded-[28px] border border-white/80 bg-white/90 shadow-sm backdrop-blur">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-700">
-                      <Camera className="h-4 w-4" />
-                      Technician QC
-                    </div>
-                    <h1 className="mt-4 text-3xl font-semibold text-slate-950">New QC submission</h1>
-                    <p className="mt-2 max-w-2xl text-sm text-slate-500">
-                      Paste the job details, upload the screenshot, then take 3 to 7 live photos in the camera view.
-                    </p>
+          <Card className="overflow-hidden rounded-[28px] border border-white/80 bg-white/90 shadow-sm backdrop-blur">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-700">
+                    <Camera className="h-4 w-4" />
+                    Technician QC
                   </div>
-                  {progress ? (
-                    <div className="rounded-[24px] border border-sky-100 bg-sky-50 p-4 text-slate-900">
-                      <p className="text-sm text-slate-500">Approved this period</p>
-                      <p className="mt-1 text-3xl font-semibold">{progress.submittedCount} / {progress.requiredCount}</p>
-                      <div className="mt-3">
-                        <StatusBadge status={progress.status} statusIcon={progress.statusIcon} />
-                      </div>
+                  <h1 className="mt-4 text-3xl font-semibold text-slate-950">New QC submission</h1>
+                  <p className="mt-2 max-w-2xl text-sm text-slate-500">
+                    Paste the job details, upload the screenshot, then take 3 to 7 live photos in the camera view.
+                  </p>
+                </div>
+                {progress ? (
+                  <div className="rounded-[24px] border border-sky-100 bg-sky-50 p-4 text-slate-900">
+                    <p className="text-sm text-slate-500">Approved this period</p>
+                    <p className="mt-1 text-3xl font-semibold">{progress.submittedCount} / {progress.requiredCount}</p>
+                    <div className="mt-3">
+                      <StatusBadge status={progress.status} statusIcon={progress.statusIcon} />
                     </div>
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[28px] border border-white/80 bg-white/90 shadow-sm backdrop-blur">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg text-slate-950">
-                  <CheckCircle2 className="h-5 w-5 text-teal-600" />
-                  Upload status
-                </CardTitle>
-                <CardDescription>
-                  {screenshotReady && minimumReady ? "Required items are ready." : "The app will prompt you when it needs something."}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm">
-                  <span>Compression saved</span>
-                  <span className="font-medium">{formatBytes(compressionSaved)}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm">
-                  <span>Screenshot</span>
-                  <Badge variant={screenshotReady ? "default" : "outline"}>{screenshotReady ? "Ready" : "Missing"}</Badge>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm">
-                  <span>Live photos</span>
-                  <Badge variant={minimumReady ? "default" : "outline"}>{onsiteReadyCount} / {MIN_ONSITE_PHOTOS} min</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </div>
+                ) : null}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         <Card className={screenshotReady ? "border-none bg-transparent shadow-none" : "rounded-[28px] border border-white/80 bg-white/90 shadow-sm backdrop-blur"}>
