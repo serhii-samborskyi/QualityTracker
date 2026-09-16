@@ -41,10 +41,11 @@ export async function ensureDatabaseSchema() {
       job_id TEXT NOT NULL,
       account_number TEXT NOT NULL,
       address TEXT NOT NULL,
-      tap_image TEXT NOT NULL,
-      ground_block_image TEXT NOT NULL,
-      bonding_image TEXT NOT NULL,
-      house_image TEXT NOT NULL,
+      tap_image TEXT,
+      ground_block_image TEXT,
+      bonding_image TEXT,
+      house_image TEXT,
+      onsite_images JSONB NOT NULL DEFAULT '[]'::jsonb,
       job_screenshot TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
       supervisor_comment TEXT,
@@ -66,12 +67,33 @@ export async function ensureDatabaseSchema() {
     ALTER TABLE qc_submissions
       ADD COLUMN IF NOT EXISTS account_number TEXT;
 
+    ALTER TABLE qc_submissions
+      ADD COLUMN IF NOT EXISTS onsite_images JSONB;
+
     UPDATE qc_submissions
       SET account_number = address
       WHERE account_number IS NULL;
 
     ALTER TABLE qc_submissions
       ALTER COLUMN account_number SET NOT NULL;
+
+    UPDATE qc_submissions
+      SET onsite_images = (
+        SELECT COALESCE(jsonb_agg(image_path), '[]'::jsonb)
+        FROM unnest(ARRAY[tap_image, ground_block_image, bonding_image, house_image]) AS image_paths(image_path)
+        WHERE image_path IS NOT NULL AND image_path <> ''
+      )
+      WHERE onsite_images IS NULL OR onsite_images = '[]'::jsonb;
+
+    UPDATE qc_submissions
+      SET onsite_images = '[]'::jsonb
+      WHERE onsite_images IS NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN onsite_images SET DEFAULT '[]'::jsonb;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN onsite_images SET NOT NULL;
 
     UPDATE qc_submissions
       SET ground_block_image = ''
@@ -82,9 +104,15 @@ export async function ensureDatabaseSchema() {
       WHERE bonding_image IS NULL;
 
     ALTER TABLE qc_submissions
-      ALTER COLUMN ground_block_image SET NOT NULL;
+      ALTER COLUMN tap_image DROP NOT NULL;
 
     ALTER TABLE qc_submissions
-      ALTER COLUMN bonding_image SET NOT NULL;
+      ALTER COLUMN ground_block_image DROP NOT NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN bonding_image DROP NOT NULL;
+
+    ALTER TABLE qc_submissions
+      ALTER COLUMN house_image DROP NOT NULL;
   `);
 }

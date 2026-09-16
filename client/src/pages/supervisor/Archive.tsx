@@ -59,6 +59,7 @@ type QCSubmission = {
   status: string;
   supervisorComment?: string;
   reviewedAt?: string;
+  onsiteImages?: string[] | null;
   tapImage: string;
   groundBlockImage: string;
   bondingImage: string;

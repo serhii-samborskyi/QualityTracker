@@ -9,6 +9,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import ImageViewer from "@/components/ImageViewer";
 import { Search, X } from "lucide-react";
+import { getOnsitePhotoItems, getQCViewerImages } from "@/lib/qc-images";
 
 type QCSubmission = {
   id: number;
@@ -17,10 +18,11 @@ type QCSubmission = {
   jobId: string;
   accountNumber?: string;
   address: string;
-  tapImage: string;
-  groundBlockImage: string;
-  bondingImage: string;
-  houseImage: string;
+  onsiteImages?: string[] | null;
+  tapImage: string | null;
+  groundBlockImage: string | null;
+  bondingImage: string | null;
+  houseImage: string | null;
   jobScreenshot: string;
   status: string;
   supervisorComment: string | null;
@@ -155,38 +157,8 @@ export default function QCReview() {
   };
   
   // Function to open the image viewer
-  const openImageViewer = (qc: QCSubmission, initialType: string) => {
-    // Create an array of images from the QC submission
-    const images = [
-      { title: 'Onsite photo 1', url: qc.tapImage },
-      { title: 'Onsite photo 2', url: qc.groundBlockImage },
-      { title: 'Onsite photo 3', url: qc.bondingImage },
-      { title: 'Onsite photo 4', url: qc.houseImage },
-      { title: 'Job Screenshot', url: qc.jobScreenshot }
-    ];
-    
-    // Set the initial image index based on which thumbnail was clicked
-    let initialIndex = 0;
-    switch (initialType) {
-      case 'tap':
-        initialIndex = 0;
-        break;
-      case 'groundBlock':
-        initialIndex = 1;
-        break;
-      case 'bonding':
-        initialIndex = 2;
-        break;
-      case 'house':
-        initialIndex = 3;
-        break;
-      case 'jobScreenshot':
-        initialIndex = 4;
-        break;
-      default:
-        initialIndex = 0;
-    }
-    
+  const openImageViewer = (qc: QCSubmission, initialIndex: number) => {
+    const images = getQCViewerImages(qc);
     setSelectedImages(images);
     setInitialImageIndex(initialIndex);
     setIsImageViewerOpen(true);
@@ -350,42 +322,17 @@ export default function QCReview() {
                         </div>
                         
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                          <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 1</p>
-                            <div 
-                              className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
-                              onClick={() => openImageViewer(qc, 'tap')}
-                            >
-                              <img src={qc.tapImage} alt="Onsite photo 1" className="h-full w-full object-cover" />
+                          {getOnsitePhotoItems(qc).map((image, index) => (
+                            <div key={image.title}>
+                              <p className="text-xs font-medium text-gray-500 mb-1">{image.title}</p>
+                              <div
+                                className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
+                                onClick={() => openImageViewer(qc, index)}
+                              >
+                                <img src={image.url} alt={image.title} className="h-full w-full object-cover" />
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 2</p>
-                            <div 
-                              className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
-                              onClick={() => openImageViewer(qc, 'groundBlock')}
-                            >
-                              <img src={qc.groundBlockImage} alt="Onsite photo 2" className="h-full w-full object-cover" />
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 3</p>
-                            <div 
-                              className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
-                              onClick={() => openImageViewer(qc, 'bonding')}
-                            >
-                              <img src={qc.bondingImage} alt="Onsite photo 3" className="h-full w-full object-cover" />
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-xs font-medium text-gray-500 mb-1">Onsite photo 4</p>
-                            <div 
-                              className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
-                              onClick={() => openImageViewer(qc, 'house')}
-                            >
-                              <img src={qc.houseImage} alt="Onsite photo 4" className="h-full w-full object-cover" />
-                            </div>
-                          </div>
+                          ))}
                         </div>
                         
                         <div className="mt-4">
@@ -407,7 +354,7 @@ export default function QCReview() {
                           <p className="text-xs font-medium text-gray-500 mb-1">Job Screenshot</p>
                           <div 
                             className="mt-1 h-36 w-full rounded bg-gray-100 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
-                            onClick={() => openImageViewer(qc, 'jobScreenshot')}
+                            onClick={() => openImageViewer(qc, getOnsitePhotoItems(qc).length)}
                           >
                             <img 
                               src={qc.jobScreenshot} 

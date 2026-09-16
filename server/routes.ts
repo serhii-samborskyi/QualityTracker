@@ -538,6 +538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     isAuthenticated, 
     isTechnician,
     upload.fields([
+      { name: 'onsiteImages', maxCount: 7 },
       { name: 'tapImage', maxCount: 1 },
       { name: 'groundBlockImage', maxCount: 1 },
       { name: 'bondingImage', maxCount: 1 },
@@ -554,21 +555,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "Job number and account number are required" });
         }
 
-        const requiredImageFields = [
-          "jobScreenshot",
-          "tapImage",
-          "groundBlockImage",
-          "bondingImage",
-          "houseImage",
-        ];
-        const missingImages = requiredImageFields.filter((field) => !files[field]?.[0]);
-
-        if (missingImages.length > 0) {
+        if (!files.jobScreenshot?.[0]) {
           return res.status(400).json({
-            message: "One uploaded screenshot and four onsite camera photos are required",
-            missingImages,
+            message: "One uploaded screenshot is required",
           });
         }
+
+        const onsiteFiles = [
+          ...(files.onsiteImages || []),
+          ...(files.tapImage || []),
+          ...(files.groundBlockImage || []),
+          ...(files.bondingImage || []),
+          ...(files.houseImage || []),
+        ];
+
+        if (onsiteFiles.length < 3 || onsiteFiles.length > 7) {
+          return res.status(400).json({
+            message: "Submit between 3 and 7 onsite camera photos",
+            onsitePhotoCount: onsiteFiles.length,
+          });
+        }
+
+        const onsiteImageUrls = onsiteFiles.map((file) => `/uploads/${file.filename}`);
         
         const currentPeriod = await storage.getCurrentQCPeriod();
         if (!currentPeriod) {
@@ -581,10 +589,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           jobId,
           accountNumber,
           address: accountNumber,
-          tapImage: `/uploads/${files.tapImage[0].filename}`,
-          groundBlockImage: `/uploads/${files.groundBlockImage[0].filename}`,
-          bondingImage: `/uploads/${files.bondingImage[0].filename}`,
-          houseImage: `/uploads/${files.houseImage[0].filename}`,
+          tapImage: onsiteImageUrls[0] || null,
+          groundBlockImage: onsiteImageUrls[1] || null,
+          bondingImage: onsiteImageUrls[2] || null,
+          houseImage: onsiteImageUrls[3] || null,
+          onsiteImages: onsiteImageUrls,
           jobScreenshot: `/uploads/${files.jobScreenshot[0].filename}`,
         };
         
@@ -1126,6 +1135,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const normalizedPath = relativeUrl.startsWith('/') ? relativeUrl : `/${relativeUrl}`;
         return `${baseUrl}${normalizedPath}`;
       };
+
+      const onsiteImages = submission.onsiteImages?.length
+        ? submission.onsiteImages
+        : [submission.tapImage, submission.groundBlockImage, submission.bondingImage, submission.houseImage].filter(Boolean);
       
       // Return the complete absolute URLs in a JSON response
       const imageUrls = {
@@ -1133,6 +1146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         jobId: submission.jobId,
         accountNumber: submission.accountNumber || submission.address,
         technicianId: submission.technicianId,
+        onsiteImageUrls: onsiteImages.map((url) => getAbsoluteUrl(url)),
         tapImageUrl: getAbsoluteUrl(submission.tapImage),
         groundBlockImageUrl: getAbsoluteUrl(submission.groundBlockImage),
         bondingImageUrl: getAbsoluteUrl(submission.bondingImage),
@@ -1183,6 +1197,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const normalizedPath = relativeUrl.startsWith('/') ? relativeUrl : `/${relativeUrl}`;
         return `${baseUrl}${normalizedPath}`;
       };
+
+      const onsiteImages = submission.onsiteImages?.length
+        ? submission.onsiteImages
+        : [submission.tapImage, submission.groundBlockImage, submission.bondingImage, submission.houseImage].filter(Boolean);
       
       // Return the complete absolute URLs in a JSON response
       const imageUrls = {
@@ -1190,6 +1208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         jobId: submission.jobId,
         accountNumber: submission.accountNumber || submission.address,
         technicianId: submission.technicianId,
+        onsiteImageUrls: onsiteImages.map((url) => getAbsoluteUrl(url)),
         tapImageUrl: getAbsoluteUrl(submission.tapImage),
         groundBlockImageUrl: getAbsoluteUrl(submission.groundBlockImage),
         bondingImageUrl: getAbsoluteUrl(submission.bondingImage),

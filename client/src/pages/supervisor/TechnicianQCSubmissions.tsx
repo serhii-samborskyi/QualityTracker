@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import ImageViewer from "@/components/ImageViewer";
+import { getQCViewerImages } from "@/lib/qc-images";
 
 interface QCSubmission {
   id: number;
@@ -19,10 +20,11 @@ interface QCSubmission {
   accountNumber?: string;
   address: string;
   status: string;
-  tapImage: string;
-  groundBlockImage: string;
-  bondingImage: string;
-  houseImage: string;
+  onsiteImages?: string[] | null;
+  tapImage: string | null;
+  groundBlockImage: string | null;
+  bondingImage: string | null;
+  houseImage: string | null;
   jobScreenshot: string;
   supervisorComment: string | null;
   createdAt: string;
@@ -71,15 +73,7 @@ export default function TechnicianQCSubmissions() {
   
   // Function to view images for a submission
   const viewImages = (submission: QCSubmission, initialImageIndex: number = 0) => {
-    const images = [
-      { title: "Onsite photo 1", url: submission.tapImage },
-      { title: "Onsite photo 2", url: submission.groundBlockImage },
-      { title: "Onsite photo 3", url: submission.bondingImage },
-      { title: "Onsite photo 4", url: submission.houseImage },
-      { title: "Job Screenshot", url: submission.jobScreenshot },
-    ];
-    
-    setCurrentImages(images);
+    setCurrentImages(getQCViewerImages(submission));
     setInitialIndex(initialImageIndex);
     setViewerOpen(true);
   };
@@ -295,6 +289,8 @@ function SubmissionCard({
   viewImages: (submission: QCSubmission, initialImageIndex?: number) => void;
   formatDate: (dateString: string) => string;
 }) {
+  const images = getQCViewerImages(submission);
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2 px-6">
@@ -308,27 +304,16 @@ function SubmissionCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 px-6">
-        <div className="grid grid-cols-5 gap-1 mb-2">
-          <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
-            onClick={() => viewImages(submission, 0)}>
-            <img src={submission.tapImage} alt="Onsite photo 1" className="w-full h-full object-cover hover:opacity-90 transition" />
-          </div>
-          <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
-            onClick={() => viewImages(submission, 1)}>
-            <img src={submission.groundBlockImage} alt="Onsite photo 2" className="w-full h-full object-cover hover:opacity-90 transition" />
-          </div>
-          <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
-            onClick={() => viewImages(submission, 2)}>
-            <img src={submission.bondingImage} alt="Onsite photo 3" className="w-full h-full object-cover hover:opacity-90 transition" />
-          </div>
-          <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
-            onClick={() => viewImages(submission, 3)}>
-            <img src={submission.houseImage} alt="Onsite photo 4" className="w-full h-full object-cover hover:opacity-90 transition" />
-          </div>
-          <div className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
-            onClick={() => viewImages(submission, 4)}>
-            <img src={submission.jobScreenshot} alt="Job Screenshot" className="w-full h-full object-cover hover:opacity-90 transition" />
-          </div>
+        <div className="grid grid-cols-4 gap-1 mb-2 sm:grid-cols-5">
+          {images.map((image, index) => (
+            <div
+              key={image.title}
+              className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
+              onClick={() => viewImages(submission, index)}
+            >
+              <img src={image.url} alt={image.title} className="w-full h-full object-cover hover:opacity-90 transition" />
+            </div>
+          ))}
         </div>
         
         {submission.supervisorComment && (

@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatusBadge from "@/components/StatusBadge";
+import { getQCViewerImages } from "@/lib/qc-images";
 
 type QCSubmission = {
   id: number;
   jobId: string;
   accountNumber?: string;
   address: string;
+  onsiteImages?: string[] | null;
   status: string;
   tapImage?: string | null;
   groundBlockImage?: string | null;
@@ -21,13 +23,7 @@ export default function QCSubmissionCard({ submission }: {
   isReviewMode?: boolean;
   isReadOnly?: boolean;
 }) {
-  const images = [
-    ["Onsite photo 1", submission.tapImage],
-    ["Onsite photo 2", submission.groundBlockImage],
-    ["Onsite photo 3", submission.bondingImage],
-    ["Onsite photo 4", submission.houseImage],
-    ["Job Screenshot", submission.jobScreenshot],
-  ].filter(([, url]) => Boolean(url));
+  const images = getQCViewerImages(submission);
 
   return (
     <Card>
@@ -40,10 +36,10 @@ export default function QCSubmissionCard({ submission }: {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-          {images.map(([title, url]) => (
+          {images.map(({ title, url }) => (
             <div key={title} className="space-y-1">
               <p className="text-xs font-medium">{title}</p>
-              <img src={String(url)} alt={String(title)} className="h-24 w-full rounded-md object-cover" />
+              <img src={url} alt={title} className="h-24 w-full rounded-md object-cover" />
             </div>
           ))}
         </div>

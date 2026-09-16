@@ -308,10 +308,11 @@ export const getQCImagesByJobAndTechnician = async (jobId: string, technicianId:
       jobId: string;
       accountNumber?: string;
       technicianId: number;
-      tapImage: string;
-      groundBlockImage: string;
-      bondingImage: string;
-      houseImage: string;
+      onsiteImageUrls?: string[];
+      tapImage?: string | null;
+      groundBlockImage?: string | null;
+      bondingImage?: string | null;
+      houseImage?: string | null;
       jobScreenshot: string;
       status: string;
     };

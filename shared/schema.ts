@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  jsonb,
   pgTable,
   serial,
   text,
@@ -44,10 +45,11 @@ export const qcSubmissions = pgTable("qc_submissions", {
   jobId: text("job_id").notNull(),
   accountNumber: text("account_number").notNull(),
   address: text("address").notNull(),
-  tapImage: text("tap_image").notNull(),
-  groundBlockImage: text("ground_block_image").notNull(),
-  bondingImage: text("bonding_image").notNull(),
-  houseImage: text("house_image").notNull(),
+  tapImage: text("tap_image"),
+  groundBlockImage: text("ground_block_image"),
+  bondingImage: text("bonding_image"),
+  houseImage: text("house_image"),
+  onsiteImages: jsonb("onsite_images").$type<string[]>().notNull().default([]),
   jobScreenshot: text("job_screenshot").notNull(),
   status: text("status").notNull().default("pending"),
   supervisorComment: text("supervisor_comment"),
@@ -89,7 +91,9 @@ export const insertQCPeriodSchema = createInsertSchema(qcPeriods, {
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
 }).omit({ id: true, createdAt: true });
-export const insertQCSubmissionSchema = createInsertSchema(qcSubmissions).omit({
+export const insertQCSubmissionSchema = createInsertSchema(qcSubmissions, {
+  onsiteImages: z.array(z.string()).min(3).max(7),
+}).omit({
   id: true,
   status: true,
   supervisorComment: true,

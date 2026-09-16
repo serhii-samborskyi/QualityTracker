@@ -8,6 +8,7 @@ import StatusBadge from "@/components/StatusBadge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import ImageViewer from "@/components/ImageViewer";
+import { getOnsitePhotoItems } from "@/lib/qc-images";
 
 type TechnicianProgress = {
   technician: {
@@ -64,41 +65,11 @@ export default function Dashboard() {
   };
   
   // Function to open the image viewer
-  function openImageViewer(qc: any, initialType: string) {
-    console.log("Opening image viewer", qc, initialType);
-    
-    // Create an array of images from the QC submission
-    const images = [
-      { title: 'Onsite photo 1', url: qc.tapImage },
-      { title: 'Onsite photo 2', url: qc.groundBlockImage },
-      { title: 'Onsite photo 3', url: qc.bondingImage },
-      { title: 'Onsite photo 4', url: qc.houseImage }
-    ];
-    
-    // Set the initial image index based on which thumbnail was clicked
-    let initialIndex = 0;
-    switch (initialType) {
-      case 'tap':
-        initialIndex = 0;
-        break;
-      case 'groundBlock':
-        initialIndex = 1;
-        break;
-      case 'bonding':
-        initialIndex = 2;
-        break;
-      case 'house':
-        initialIndex = 3;
-        break;
-      default:
-        initialIndex = 0;
-    }
-    
-    console.log("Setting images:", images);
+  function openImageViewer(qc: any, initialIndex: number) {
+    const images = getOnsitePhotoItems(qc);
     setSelectedImages(images);
     setInitialImageIndex(initialIndex);
     setIsImageViewerOpen(true);
-    console.log("Image viewer should be open now");
   }
 
   if (periodQuery.isLoading || progressQuery.isLoading || statusIconsQuery.isLoading) {
@@ -319,42 +290,17 @@ export default function Dashboard() {
                     </div>
                     
                     <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                      <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 1</p>
-                        <div 
-                          className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
-                          onClick={() => openImageViewer(qc, 'tap')}
-                        >
-                          <img src={qc.tapImage} alt="Onsite photo 1" className="h-full w-full object-cover" />
+                      {getOnsitePhotoItems(qc).map((image, index) => (
+                        <div key={image.title}>
+                          <p className="text-xs font-medium text-gray-600 mb-1">{image.title}</p>
+                          <div
+                            className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
+                            onClick={() => openImageViewer(qc, index)}
+                          >
+                            <img src={image.url} alt={image.title} className="h-full w-full object-cover" />
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 2</p>
-                        <div 
-                          className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
-                          onClick={() => openImageViewer(qc, 'groundBlock')}
-                        >
-                          <img src={qc.groundBlockImage} alt="Onsite photo 2" className="h-full w-full object-cover" />
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 3</p>
-                        <div 
-                          className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
-                          onClick={() => openImageViewer(qc, 'bonding')}
-                        >
-                          <img src={qc.bondingImage} alt="Onsite photo 3" className="h-full w-full object-cover" />
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-gray-600 mb-1">Onsite photo 4</p>
-                        <div 
-                          className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
-                          onClick={() => openImageViewer(qc, 'house')}
-                        >
-                          <img src={qc.houseImage} alt="Onsite photo 4" className="h-full w-full object-cover" />
-                        </div>
-                      </div>
+                      ))}
                     </div>
                     
                     <Link href="/supervisor/review">
