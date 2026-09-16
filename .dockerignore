@@ -1,0 +1,12 @@
+.git
+.local
+.config
+node_modules
+dist
+coverage
+npm-debug.log*
+.env
+uploads/*
+!uploads/.gitkeep
+cookies.txt
+*.sample

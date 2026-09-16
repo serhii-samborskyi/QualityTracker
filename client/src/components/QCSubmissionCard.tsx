@@ -1,0 +1,55 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import StatusBadge from "@/components/StatusBadge";
+
+type QCSubmission = {
+  id: number;
+  jobId: string;
+  address: string;
+  status: string;
+  tapImage?: string | null;
+  groundBlockImage?: string | null;
+  bondingImage?: string | null;
+  houseImage?: string | null;
+  jobScreenshot?: string | null;
+  supervisorComment?: string | null;
+  createdAt?: string;
+};
+
+export default function QCSubmissionCard({ submission }: {
+  submission: QCSubmission;
+  isReviewMode?: boolean;
+  isReadOnly?: boolean;
+}) {
+  const images = [
+    ["Tap", submission.tapImage],
+    ["Ground Block", submission.groundBlockImage],
+    ["Bonding", submission.bondingImage],
+    ["House", submission.houseImage],
+    ["Job Screenshot", submission.jobScreenshot],
+  ].filter(([, url]) => Boolean(url));
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="text-lg">Job: {submission.jobId}</CardTitle>
+          <StatusBadge status={submission.status} />
+        </div>
+        <p className="text-sm text-muted-foreground">{submission.address}</p>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          {images.map(([title, url]) => (
+            <div key={title} className="space-y-1">
+              <p className="text-xs font-medium">{title}</p>
+              <img src={String(url)} alt={String(title)} className="h-24 w-full rounded-md object-cover" />
+            </div>
+          ))}
+        </div>
+        {submission.supervisorComment ? (
+          <p className="mt-4 rounded-md bg-muted p-3 text-sm">{submission.supervisorComment}</p>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}

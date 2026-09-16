@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+client/.env
+.local/
+.config/
+cookies.txt
+uploads/*
+!uploads/.gitkeep
+npm-debug.log*
+.DS_Store

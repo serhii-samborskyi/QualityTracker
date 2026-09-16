@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f1f1f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Styles for image viewer dialog close button */
+.DialogContent [data-state=open].DialogClose,
+.DialogContent button[data-radix-collection-item] {
+  color: white !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 9999px !important;
+}
+
+.DialogContent [data-state=open].DialogClose:hover,
+.DialogContent button[data-radix-collection-item]:hover {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  color: rgb(209 213 219) !important;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
