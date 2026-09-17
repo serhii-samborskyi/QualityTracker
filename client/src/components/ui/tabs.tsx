@@ -26,7 +26,7 @@ export function Tabs({ defaultValue, value, onValueChange, children, className }
 }
 
 export function TabsList({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground", className)} {...props} />;
+  return <div className={cn("inline-flex h-11 items-center justify-center rounded-2xl bg-slate-100 p-1 text-slate-500", className)} {...props} />;
 }
 
 export function TabsTrigger({ value, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { value: string }) {
@@ -34,7 +34,7 @@ export function TabsTrigger({ value, className, ...props }: React.ButtonHTMLAttr
   const active = context?.value === value;
   return (
     <button
-      className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium", active && "bg-background text-foreground shadow-sm", className)}
+      className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3 py-1.5 text-sm font-medium transition", active && "bg-white text-slate-950 shadow-sm", className)}
       onClick={() => context?.setValue(value)}
       {...props}
     />

@@ -2,12 +2,14 @@ import SupervisorNotifications from "@/components/notifications/SupervisorNotifi
 
 export default function Notifications() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="py-4">
-        <h1 className="text-2xl font-semibold text-gray-900">Notification Settings</h1>
-        <p className="mt-2 text-sm text-gray-500">
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+        <h1 className="admin-title">Notification Settings</h1>
+        <p className="admin-subtitle">
           Manage your notification preferences and send reminders to technicians.
         </p>
+        </div>
       </div>
       
       <div className="py-4">

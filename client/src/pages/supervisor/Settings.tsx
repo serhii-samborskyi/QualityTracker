@@ -230,10 +230,10 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Settings</h1>
+      <div className="admin-page">
+        <h1 className="admin-title">Settings</h1>
         <div className="py-4">
-          <Card className="shadow-md rounded-xl border border-gray-100">
+          <Card className="admin-panel">
             <CardContent className="pt-6">
               <div className="space-y-6">
                 <Skeleton className="h-8 w-64" />
@@ -254,13 +254,13 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-      <h1 className="text-3xl font-semibold text-gray-800">Settings</h1>
+    <div className="admin-page">
+      <h1 className="admin-title">Settings</h1>
       <div className="py-4 space-y-6">
         {/* Account Settings Card */}
-        <Card className="shadow-md rounded-xl border border-gray-100">
+        <Card className="admin-panel">
           <CardContent className="pt-6">
-            <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Account Settings</h2>
+            <h2 className="mb-6 text-xl font-semibold text-slate-950">Account Settings</h2>
             
             <form onSubmit={handleCredentialsSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -278,7 +278,7 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label htmlFor="password" className="flex items-center justify-between">
                   <span>New Password</span>
-                  <span className="text-sm text-gray-500">(leave blank to keep current password)</span>
+                  <span className="text-sm text-slate-500">(leave blank to keep current password)</span>
                 </Label>
                 <div className="relative max-w-md">
                   <Input
@@ -292,7 +292,7 @@ export default function Settings() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -313,7 +313,7 @@ export default function Settings() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
                   >
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -324,7 +324,7 @@ export default function Settings() {
                 <Button 
                   type="submit"
                   disabled={updateCredentialsMutation.isPending}
-                  className="bg-[#4e7ac7] hover:bg-blue-700"
+                  className="admin-primary-button"
                 >
                   {updateCredentialsMutation.isPending ? (
                     <div className="flex items-center gap-2">
@@ -339,9 +339,9 @@ export default function Settings() {
         </Card>
         
         {/* Notifications Card */}
-        <Card className="shadow-md rounded-xl border border-gray-100">
+        <Card className="admin-panel">
           <CardContent className="pt-6">
-            <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-6">Push Notifications</h2>
+            <h2 className="mb-6 text-xl font-semibold text-slate-950">Push Notifications</h2>
             
             {/* OneSignal Status */}
             <div className="-mx-6 mt-4 mb-4">
@@ -352,7 +352,7 @@ export default function Settings() {
               <Button 
                 onClick={handleSendTestNotification} 
                 disabled={isSendingTest}
-                className="w-full"
+                className="admin-primary-button w-full"
                 variant="default"
               >
                 {isSendingTest ? (
@@ -367,20 +367,20 @@ export default function Settings() {
         </Card>
         
         {/* Status Icons Card */}
-        <Card className="shadow-md rounded-xl border border-gray-100">
+        <Card className="admin-panel">
           <CardContent className="pt-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Status Icons</h2>
+              <h2 className="text-xl font-semibold text-slate-950">Status Icons</h2>
               <Button
                 onClick={resetStatusIcons}
                 disabled={isResettingIcons}
-                className="border border-[#4e7ac7] bg-[#4e7ac7] hover:bg-blue-700 text-white font-medium"
+                className="admin-primary-button"
               >
                 {isResettingIcons ? "Resetting..." : "Reset to Defaults"}
               </Button>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6 text-slate-600">
               Configure the names for the 5 status levels. These status levels will be assigned to technicians based on the number of QCs they have submitted.
             </p>
             
@@ -388,15 +388,15 @@ export default function Settings() {
               <div className="space-y-6">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 px-3 text-sm font-medium text-gray-600">Icon</th>
-                      <th className="text-left py-2 px-3 text-sm font-medium text-gray-600">Name</th>
-                      <th className="text-right py-2 px-3 text-sm font-medium text-gray-600">Actions</th>
+                    <tr className="border-b border-slate-200">
+                      <th className="text-left py-2 px-3 text-sm font-semibold text-slate-600">Icon</th>
+                      <th className="text-left py-2 px-3 text-sm font-semibold text-slate-600">Name</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-slate-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {statusIcons.map((icon) => (
-                      <tr key={icon.id} className="border-b border-gray-100">
+                      <tr key={icon.id} className="border-b border-slate-100">
                         <td className="py-3 px-3">
                           <StatusBadge status={icon.name} statusIcon={icon} />
                         </td>
@@ -411,7 +411,7 @@ export default function Settings() {
                               />
                             </form>
                           ) : (
-                            <span className="text-gray-800">{icon.name}</span>
+                            <span className="text-slate-800">{icon.name}</span>
                           )}
                         </td>
                         <td className="py-3 px-3 text-right">
@@ -421,7 +421,7 @@ export default function Settings() {
                                 size="sm"
                                 type="button"
                                 onClick={handleEditSubmit}
-                                className="bg-green-600 hover:bg-green-700 text-white"
+                                className="admin-success-button"
                                 disabled={updateIconMutation.isPending}
                               >
                                 {updateIconMutation.isPending ? "Saving..." : "Save"}
@@ -431,7 +431,7 @@ export default function Settings() {
                                 type="button"
                                 variant="outline"
                                 onClick={cancelEditing}
-                                className="border-gray-300 text-gray-700"
+                                className="admin-secondary-button"
                                 disabled={updateIconMutation.isPending}
                               >
                                 Cancel
@@ -443,7 +443,7 @@ export default function Settings() {
                               type="button"
                               variant="outline"
                               onClick={() => startEditing(icon)}
-                              className="border-[#4e7ac7] text-[#4e7ac7] hover:bg-blue-50"
+                              className="admin-secondary-button"
                             >
                               Edit
                             </Button>
@@ -458,7 +458,7 @@ export default function Settings() {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-gray-600">No status icons found. Click "Reset to Defaults" to create the default icons.</p>
+                <p className="text-slate-600">No status icons found. Click "Reset to Defaults" to create the default icons.</p>
               </div>
             )}
           </CardContent>

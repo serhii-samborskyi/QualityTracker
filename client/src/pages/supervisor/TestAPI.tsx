@@ -164,13 +164,18 @@ export default function TestAPI() {
   };
   
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">API Testing Tool</h1>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-title">API Testing Tool</h1>
+          <p className="admin-subtitle">Test QC image endpoints and inspect returned payloads.</p>
+        </div>
+      </div>
       
       <div className="grid gap-6">
-        <Card>
+        <Card className="admin-panel">
           <CardHeader>
-            <CardTitle>API Testing</CardTitle>
+            <CardTitle className="text-slate-950">API Testing</CardTitle>
             <CardDescription>
               Test the QC Images API endpoint with different parameters
             </CardDescription>
@@ -198,9 +203,10 @@ export default function TestAPI() {
                 </div>
               </div>
               
-              <div className="flex justify-between mt-4">
+              <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row">
                 <Button 
                   variant="outline" 
+                  className="admin-secondary-button"
                   onClick={getSubmissionsForTesting}
                   disabled={isLoading}
                 >
@@ -211,9 +217,10 @@ export default function TestAPI() {
                     </>
                   ) : "Find Test Data"}
                 </Button>
-                <div className="space-x-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Button 
                     variant="outline" 
+                    className="admin-secondary-button"
                     onClick={testSimpleEndpoint}
                     disabled={isLoading}
                   >
@@ -225,6 +232,7 @@ export default function TestAPI() {
                     ) : "Test Simple API"}
                   </Button>
                   <Button 
+                    className="admin-primary-button"
                     onClick={testQCImagesAPI}
                     disabled={isLoading}
                   >
@@ -242,12 +250,12 @@ export default function TestAPI() {
         </Card>
         
         {apiError && (
-          <Card className="border-red-500">
+          <Card className="admin-panel border-rose-200">
             <CardHeader>
-              <CardTitle className="text-red-500">API Error</CardTitle>
+              <CardTitle className="text-rose-600">API Error</CardTitle>
             </CardHeader>
             <CardContent>
-              <pre className="bg-red-50 p-4 rounded-md text-red-800 overflow-auto whitespace-pre-wrap">
+              <pre className="overflow-auto whitespace-pre-wrap rounded-2xl bg-rose-50 p-4 text-rose-800">
                 {apiError}
               </pre>
             </CardContent>
@@ -255,16 +263,16 @@ export default function TestAPI() {
         )}
         
         {apiResults && (
-          <Card className="border-green-500">
+          <Card className="admin-panel border-emerald-200">
             <CardHeader>
-              <CardTitle className="text-green-500">API Results</CardTitle>
+              <CardTitle className="text-emerald-700">API Results</CardTitle>
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="json">
                   <AccordionTrigger>View JSON Response</AccordionTrigger>
                   <AccordionContent>
-                    <pre className="bg-green-50 p-4 rounded-md text-green-800 overflow-auto whitespace-pre-wrap">
+                    <pre className="overflow-auto whitespace-pre-wrap rounded-2xl bg-emerald-50 p-4 text-emerald-800">
                       {JSON.stringify(apiResults, null, 2)}
                     </pre>
                   </AccordionContent>
@@ -280,7 +288,7 @@ export default function TestAPI() {
                           <img 
                             src={apiResults.tapImage} 
                             alt="Onsite photo 1" 
-                            className="rounded-md border border-gray-200 max-h-64 object-contain"
+                            className="admin-thumb max-h-64 object-contain"
                           />
                         </div>
                         
@@ -290,7 +298,7 @@ export default function TestAPI() {
                             <img 
                               src={apiResults.groundBlockImage} 
                               alt="Onsite photo 2" 
-                              className="rounded-md border border-gray-200 max-h-64 object-contain"
+                              className="admin-thumb max-h-64 object-contain"
                             />
                           </div>
                         )}
@@ -301,7 +309,7 @@ export default function TestAPI() {
                             <img 
                               src={apiResults.bondingImage} 
                               alt="Onsite photo 3" 
-                              className="rounded-md border border-gray-200 max-h-64 object-contain"
+                              className="admin-thumb max-h-64 object-contain"
                             />
                           </div>
                         )}
@@ -312,7 +320,7 @@ export default function TestAPI() {
                             <img 
                               src={apiResults.houseImage} 
                               alt="Onsite photo 4" 
-                              className="rounded-md border border-gray-200 max-h-64 object-contain"
+                              className="admin-thumb max-h-64 object-contain"
                             />
                           </div>
                         )}
@@ -323,7 +331,7 @@ export default function TestAPI() {
                             <img 
                               src={apiResults.jobScreenshot} 
                               alt="Job Screenshot" 
-                              className="rounded-md border border-gray-200 max-h-64 object-contain"
+                              className="admin-thumb max-h-64 object-contain"
                             />
                           </div>
                         )}

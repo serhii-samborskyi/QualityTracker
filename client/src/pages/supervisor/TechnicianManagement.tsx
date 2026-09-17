@@ -133,15 +133,15 @@ export default function TechnicianManagement() {
   };
 
   return (
-    <div className="container mx-auto py-6 px-4 space-y-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="admin-page space-y-6">
+      <div className="admin-page-header">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#0A3D73]">Technician Management</h1>
-          <p className="text-[#0A3D73]">Add, remove, and manage technicians</p>
+          <h1 className="admin-title">Technician Management</h1>
+          <p className="admin-subtitle">Add, remove, and manage technicians</p>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button>Add Technician</Button>
+            <Button className="admin-primary-button">Add Technician</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -216,10 +216,10 @@ export default function TechnicianManagement() {
                 />
 
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  <Button type="button" variant="outline" className="admin-secondary-button" onClick={() => setIsAddDialogOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={addTechnicianMutation.isPending}>
+                  <Button type="submit" className="admin-primary-button" disabled={addTechnicianMutation.isPending}>
                     {addTechnicianMutation.isPending ? "Adding..." : "Add Technician"}
                   </Button>
                 </DialogFooter>
@@ -242,7 +242,7 @@ export default function TechnicianManagement() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            <Card key={i} className="admin-panel animate-pulse">
               <CardHeader className="bg-muted/50 h-12"></CardHeader>
               <CardContent className="pt-4">
                 <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
@@ -254,15 +254,15 @@ export default function TechnicianManagement() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {technicians?.map((technician: Technician) => (
-            <Card key={technician.id} className="bg-card hover:bg-card/80 border-border transition-colors">
+            <Card key={technician.id} className="admin-panel transition-colors hover:border-teal-200 hover:bg-teal-50/30">
               <CardHeader className="pb-2 px-6">
                 <div className="flex justify-between items-center">
-                  <CardTitle className="text-lg">{technician.name}</CardTitle>
-                  <Badge variant="outline" className="font-mono text-xs border-primary/30 bg-primary-foreground text-[#0A3D73]">
+                  <CardTitle className="text-lg text-slate-950">{technician.name}</CardTitle>
+                  <Badge variant="outline" className="border-teal-200 bg-teal-50 font-mono text-xs text-teal-800">
                     {technician.techId}
                   </Badge>
                 </div>
-                <CardDescription className="font-mono text-xs truncate">{technician.username}</CardDescription>
+                <CardDescription className="truncate font-mono text-xs">{technician.username}</CardDescription>
               </CardHeader>
               <CardFooter className="flex justify-end gap-2 pt-2 px-6">
                 {/* Clean QC Dialog */}
@@ -271,7 +271,7 @@ export default function TechnicianManagement() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      className="text-blue-600 hover:text-blue-700 hover:border-blue-300"
+                      className="admin-secondary-button"
                       onClick={() => setCleanQCConfirmId(technician.id)}
                     >
                       <Eraser className="h-4 w-4 mr-2" />
@@ -286,7 +286,7 @@ export default function TechnicianManagement() {
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setCleanQCConfirmId(null)}>
+                      <Button variant="outline" className="admin-secondary-button" onClick={() => setCleanQCConfirmId(null)}>
                         Cancel
                       </Button>
                       <Button
@@ -306,7 +306,7 @@ export default function TechnicianManagement() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      className="text-destructive hover:text-destructive/80 hover:border-destructive/20"
+                      className="rounded-2xl border-rose-200 bg-white font-semibold text-rose-600 hover:bg-rose-50"
                       onClick={() => setDeleteConfirmId(technician.id)}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
@@ -321,7 +321,7 @@ export default function TechnicianManagement() {
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
+                      <Button variant="outline" className="admin-secondary-button" onClick={() => setDeleteConfirmId(null)}>
                         Cancel
                       </Button>
                       <Button
@@ -339,9 +339,9 @@ export default function TechnicianManagement() {
           ))}
 
           {technicians?.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
-              <p className="text-muted-foreground mb-4">No technicians found</p>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(true)}>Add Your First Technician</Button>
+            <div className="admin-empty-state col-span-full">
+              <p className="mb-4">No technicians found</p>
+              <Button variant="outline" className="admin-secondary-button" onClick={() => setIsAddDialogOpen(true)}>Add Your First Technician</Button>
             </div>
           )}
         </div>

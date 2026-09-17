@@ -135,7 +135,7 @@ export default function Archive() {
   
   if (isLoadingPeriods) {
     return (
-      <div className="container flex items-center justify-center h-[80vh]">
+      <div className="admin-page flex h-[80vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -143,21 +143,24 @@ export default function Archive() {
   
   if (!archivedPeriods || archivedPeriods.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center mb-6">
-          <h1 className="text-2xl font-bold text-center text-primary">Archive</h1>
+      <div className="admin-page">
+        <div className="admin-page-header">
+          <div>
+            <h1 className="admin-title">Archive</h1>
+            <p className="admin-subtitle">Review past QC periods and historical submissions.</p>
+          </div>
         </div>
         
-        <Card className="w-full">
+        <Card className="admin-panel w-full">
           <CardHeader>
-            <CardTitle>No Archived Periods</CardTitle>
+            <CardTitle className="text-slate-950">No Archived Periods</CardTitle>
             <CardDescription>
               There are no archived QC periods available for review.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center py-12">
-            <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-60" />
-            <p className="text-muted-foreground">
+          <CardContent className="py-12 text-center">
+            <Calendar className="mx-auto mb-4 h-16 w-16 text-teal-600 opacity-70" />
+            <p className="text-slate-500">
               Archived periods will appear here once they've been marked as archived.
             </p>
           </CardContent>
@@ -167,17 +170,20 @@ export default function Archive() {
   }
   
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold text-primary">Archive</h1>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-title">Archive</h1>
+          <p className="admin-subtitle">Review past QC periods and historical submissions.</p>
+        </div>
       </div>
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-6' : 'grid-cols-3 gap-6'}`}>
         {/* Periods List */}
         <div className={isMobile ? 'col-span-1' : 'col-span-1'}>
-          <Card>
+          <Card className="admin-panel">
             <CardHeader>
-              <CardTitle>Archived Periods</CardTitle>
+              <CardTitle className="text-slate-950">Archived Periods</CardTitle>
               <CardDescription>
                 Select a period to view submissions
               </CardDescription>
@@ -188,22 +194,22 @@ export default function Archive() {
                   {archivedPeriods.map((period) => (
                     <Card 
                       key={period.id}
-                      className={`cursor-pointer hover:bg-muted/50 transition-colors ${
-                        selectedPeriodId === period.id ? 'bg-muted/80 border-primary/50' : ''
+                      className={`cursor-pointer border-slate-100 bg-white transition-colors hover:bg-teal-50/70 ${
+                        selectedPeriodId === period.id ? 'border-teal-300 bg-teal-50 shadow-sm' : ''
                       }`}
                       onClick={() => handlePeriodSelect(period.id)}
                     >
                       <CardHeader className="p-4">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="text-sm font-medium">
+                            <p className="text-sm font-semibold text-slate-950">
                               {formatDateRange(period.startDate, period.endDate)}
                             </p>
-                            <p className="text-xs text-muted-foreground mt-1">
+                            <p className="mt-1 text-xs text-slate-500">
                               Required QCs: {period.requiredQCs}
                             </p>
                           </div>
-                          <ChevronRight className={`h-5 w-5 text-primary transition-transform ${
+                          <ChevronRight className={`h-5 w-5 text-teal-600 transition-transform ${
                             selectedPeriodId === period.id ? 'rotate-90' : ''
                           }`} />
                         </div>
@@ -219,9 +225,9 @@ export default function Archive() {
         {/* Period Details & Submissions */}
         <div className={isMobile ? 'col-span-1' : 'col-span-2'}>
           {selectedPeriod ? (
-            <Card>
+            <Card className="admin-panel">
               <CardHeader>
-                <CardTitle>
+                <CardTitle className="text-slate-950">
                   Period: {formatDateRange(selectedPeriod.startDate, selectedPeriod.endDate)}
                 </CardTitle>
                 <CardDescription>
@@ -229,22 +235,22 @@ export default function Archive() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                  <div className="col-span-1 bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold">{stats.total}</p>
-                    <p className="text-xs text-muted-foreground">Total</p>
+                <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div className="admin-stat">
+                    <p className="text-2xl font-bold text-slate-950">{stats.total}</p>
+                    <p className="text-xs text-slate-500">Total</p>
                   </div>
-                  <div className="col-span-1 bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.approved}</p>
-                    <p className="text-xs text-muted-foreground">Approved</p>
+                  <div className="admin-stat bg-emerald-50">
+                    <p className="text-2xl font-bold text-emerald-700">{stats.approved}</p>
+                    <p className="text-xs text-emerald-700/70">Approved</p>
                   </div>
-                  <div className="col-span-1 bg-red-100 dark:bg-red-900/30 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.declined}</p>
-                    <p className="text-xs text-muted-foreground">Declined</p>
+                  <div className="admin-stat bg-rose-50">
+                    <p className="text-2xl font-bold text-rose-700">{stats.declined}</p>
+                    <p className="text-xs text-rose-700/70">Declined</p>
                   </div>
-                  <div className="col-span-1 bg-amber-100 dark:bg-amber-900/30 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending}</p>
-                    <p className="text-xs text-muted-foreground">Pending</p>
+                  <div className="admin-stat bg-amber-50">
+                    <p className="text-2xl font-bold text-amber-700">{stats.pending}</p>
+                    <p className="text-xs text-amber-700/70">Pending</p>
                   </div>
                 </div>
                 
@@ -264,8 +270,8 @@ export default function Archive() {
                           </div>
                         ) : !periodSubmissions || periodSubmissions.length === 0 ? (
                           <div className="text-center py-12">
-                            <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-60" />
-                            <p className="text-muted-foreground">No submissions found for this period</p>
+                            <FileText className="mx-auto mb-4 h-16 w-16 text-teal-600 opacity-70" />
+                            <p className="text-slate-500">No submissions found for this period</p>
                           </div>
                         ) : (
                           <div className="space-y-4">
@@ -290,8 +296,8 @@ export default function Archive() {
                           </div>
                         ) : !periodSubmissions || periodSubmissions.filter(s => s.status === 'approved').length === 0 ? (
                           <div className="text-center py-12">
-                            <Check className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-60" />
-                            <p className="text-muted-foreground">No approved submissions found</p>
+                            <Check className="mx-auto mb-4 h-16 w-16 text-emerald-600 opacity-70" />
+                            <p className="text-slate-500">No approved submissions found</p>
                           </div>
                         ) : (
                           <div className="space-y-4">
@@ -318,8 +324,8 @@ export default function Archive() {
                           </div>
                         ) : !periodSubmissions || periodSubmissions.filter(s => s.status === 'declined').length === 0 ? (
                           <div className="text-center py-12">
-                            <X className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-60" />
-                            <p className="text-muted-foreground">No declined submissions found</p>
+                            <X className="mx-auto mb-4 h-16 w-16 text-rose-600 opacity-70" />
+                            <p className="text-slate-500">No declined submissions found</p>
                           </div>
                         ) : (
                           <div className="space-y-4">
@@ -342,16 +348,16 @@ export default function Archive() {
               </CardContent>
             </Card>
           ) : (
-            <Card>
+            <Card className="admin-panel">
               <CardHeader>
-                <CardTitle>Select a Period</CardTitle>
+                <CardTitle className="text-slate-950">Select a Period</CardTitle>
                 <CardDescription>
                   Choose an archived period from the left to view its details
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center py-12">
-                <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-60" />
-                <p className="text-muted-foreground">
+              <CardContent className="py-12 text-center">
+                <Calendar className="mx-auto mb-4 h-16 w-16 text-teal-600 opacity-70" />
+                <p className="text-slate-500">
                   Period details and submissions will appear here
                 </p>
               </CardContent>

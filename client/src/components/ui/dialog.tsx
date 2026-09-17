@@ -45,8 +45,8 @@ export function DialogContent({ className, children, ...props }: React.HTMLAttri
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className={cn("relative w-full max-w-lg rounded-lg border bg-background p-6 shadow-lg", className)} {...props}>
-        <button className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100" onClick={() => context.setOpen(false)}>
+      <div className={cn("relative w-full max-w-lg rounded-3xl border bg-background p-6 shadow-xl", className)} {...props}>
+        <button className="absolute right-4 top-4 rounded-full p-1 opacity-70 hover:bg-muted hover:opacity-100" onClick={() => context.setOpen(false)}>
           <X className="h-4 w-4" />
         </button>
         {children}

@@ -72,15 +72,17 @@ export default function QCPeriods() {
   });
 
   return (
-    <div className="container mx-auto max-w-5xl p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-primary">QC Periods</h1>
-        <p className="text-muted-foreground">Create and manage technician QC review windows.</p>
+    <div className="admin-page-narrow space-y-6">
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-title">QC Periods</h1>
+          <p className="admin-subtitle">Create and manage technician QC review windows.</p>
+        </div>
       </div>
 
-      <Card>
+      <Card className="admin-panel">
         <CardHeader>
-          <CardTitle>Create active period</CardTitle>
+          <CardTitle className="text-slate-950">Create active period</CardTitle>
           <CardDescription>The new period will be marked active for incoming QC submissions.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-4">
@@ -97,34 +99,34 @@ export default function QCPeriods() {
             <Input id="requiredQCs" type="number" min={1} value={requiredQCs} onChange={(event) => setRequiredQCs(Number(event.target.value))} />
           </div>
           <div className="flex items-end">
-            <Button className="w-full" onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
+            <Button className="admin-primary-button w-full" onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
               {createMutation.isPending ? "Creating..." : "Create period"}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="admin-panel">
         <CardHeader>
-          <CardTitle>Existing periods</CardTitle>
+          <CardTitle className="text-slate-950">Existing periods</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {isLoading ? <p>Loading periods...</p> : null}
+          {isLoading ? <p className="text-sm text-slate-500">Loading periods...</p> : null}
           {periods.map((period) => (
-            <div key={period.id} className="flex flex-col gap-3 rounded-md border p-4 md:flex-row md:items-center md:justify-between">
+            <div key={period.id} className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-medium">{formatDate(new Date(period.startDate))} - {formatDate(new Date(period.endDate))}</p>
+                  <p className="font-semibold text-slate-950">{formatDate(new Date(period.startDate))} - {formatDate(new Date(period.endDate))}</p>
                   {period.isActive ? <Badge>Active</Badge> : null}
                   {period.isArchived ? <Badge variant="outline">Archived</Badge> : null}
                 </div>
-                <p className="text-sm text-muted-foreground">Required QCs: {period.requiredQCs}</p>
+                <p className="text-sm text-slate-500">Required QCs: {period.requiredQCs}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled={period.isArchived || period.isActive} onClick={() => setActiveMutation.mutate(period.id)}>
+                <Button variant="outline" size="sm" className="admin-secondary-button" disabled={period.isArchived || period.isActive} onClick={() => setActiveMutation.mutate(period.id)}>
                   Set active
                 </Button>
-                <Button variant="outline" size="sm" disabled={period.isArchived} onClick={() => archiveMutation.mutate(period.id)}>
+                <Button variant="outline" size="sm" className="admin-secondary-button" disabled={period.isArchived} onClick={() => archiveMutation.mutate(period.id)}>
                   Archive
                 </Button>
               </div>

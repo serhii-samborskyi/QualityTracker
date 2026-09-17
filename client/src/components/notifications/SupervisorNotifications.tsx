@@ -18,17 +18,17 @@ export default function SupervisorNotifications() {
   });
 
   return (
-    <div className="container mx-auto max-w-3xl p-6">
-      <Card>
+    <div className="mx-auto max-w-3xl">
+      <Card className="admin-panel">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BellRing className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-slate-950">
+            <BellRing className="h-5 w-5 text-teal-600" />
             Notifications
           </CardTitle>
           <CardDescription>Send QC reminders to technicians with push notifications enabled.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={() => reminderMutation.mutate()} disabled={reminderMutation.isPending}>
+          <Button className="admin-primary-button" onClick={() => reminderMutation.mutate()} disabled={reminderMutation.isPending}>
             {reminderMutation.isPending ? "Sending..." : "Send QC reminders"}
           </Button>
         </CardContent>

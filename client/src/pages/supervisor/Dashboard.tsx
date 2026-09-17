@@ -74,15 +74,15 @@ export default function Dashboard() {
 
   if (periodQuery.isLoading || progressQuery.isLoading || statusIconsQuery.isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
+      <div className="admin-page">
+        <h1 className="admin-title">Dashboard</h1>
         <div className="py-4">
-          <div className="bg-white shadow-md overflow-hidden rounded-xl border border-gray-100">
-            <div className="px-5 py-5 border-b border-gray-200 sm:px-6">
+          <div className="admin-panel">
+            <div className="admin-panel-header">
               <Skeleton className="h-6 w-64 mb-2" />
               <Skeleton className="h-4 w-48" />
             </div>
-            <ul className="divide-y divide-gray-200">
+            <ul className="divide-y divide-slate-100">
               {[1, 2, 3].map((i) => (
                 <li key={i}>
                   <div className="px-5 py-5 sm:px-6">
@@ -91,17 +91,17 @@ export default function Dashboard() {
                       <Skeleton className="h-9 w-28 rounded-full" />
                     </div>
                     
-                    <div className="bg-gray-900 rounded-xl p-6">
-                      <Skeleton className="h-7 w-36 mb-2 bg-gray-800" />
-                      <Skeleton className="h-5 w-64 mb-6 bg-gray-800" />
+                    <div className="admin-soft-panel">
+                      <Skeleton className="h-7 w-36 mb-2" />
+                      <Skeleton className="h-5 w-64 mb-6" />
                       
                       <div className="flex justify-between items-center mb-3">
-                        <Skeleton className="h-5 w-48 bg-gray-800" />
-                        <Skeleton className="h-5 w-12 bg-gray-800" />
+                        <Skeleton className="h-5 w-48" />
+                        <Skeleton className="h-5 w-12" />
                       </div>
                       
-                      <Skeleton className="h-2.5 w-full rounded-full mb-4 bg-gray-800" />
-                      <Skeleton className="h-8 w-32 bg-gray-800" />
+                      <Skeleton className="h-2.5 w-full rounded-full mb-4" />
+                      <Skeleton className="h-8 w-32" />
                     </div>
                   </div>
                 </li>
@@ -116,12 +116,12 @@ export default function Dashboard() {
   // Error handling
   if (periodQuery.error || progressQuery.error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
+      <div className="admin-page">
+        <h1 className="admin-title">Dashboard</h1>
         <div className="py-4">
-          <Card className="shadow-md rounded-xl border border-gray-100">
+          <Card className="admin-panel">
             <CardContent className="pt-6">
-              <p className="text-red-500 font-medium">Error loading data. Please try again later.</p>
+              <p className="font-medium text-rose-600">Error loading data. Please try again later.</p>
             </CardContent>
           </Card>
         </div>
@@ -132,14 +132,14 @@ export default function Dashboard() {
   // No active period
   if (!periodQuery.data) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
+      <div className="admin-page">
+        <h1 className="admin-title">Dashboard</h1>
         <div className="py-4">
-          <Card className="shadow-md rounded-xl border border-gray-100">
+          <Card className="admin-panel">
             <CardContent className="pt-6">
-              <p className="text-gray-700 mb-4">No active QC period found.</p>
+              <p className="mb-4 text-slate-700">No active QC period found.</p>
               <Link href="/supervisor/periods">
-                <Button className="mt-2 border border-[#4e7ac7] bg-[#4e7ac7] hover:bg-blue-700 text-white font-medium rounded-md">
+                <Button className="admin-primary-button mt-2">
                   Create QC Period
                 </Button>
               </Link>
@@ -151,35 +151,35 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-      <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
+    <div className="admin-page">
+      <h1 className="admin-title">Dashboard</h1>
       <div className="py-4">
         
-        <div className="bg-white shadow-md overflow-hidden rounded-xl border border-gray-100">
-          <div className="px-5 py-5 border-b border-gray-200 sm:px-6">
-            <h3 className="text-xl leading-6 font-medium text-gray-800">
+        <div className="admin-panel">
+          <div className="admin-panel-header">
+            <h3 className="admin-section-title">
               QC Period: {formatDate(periodQuery.data.startDate)} - {formatDate(periodQuery.data.endDate)}
             </h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-600">
+            <p className="admin-subtitle max-w-2xl">
               Required QCs per technician: {periodQuery.data.requiredQCs}
             </p>
           </div>
           
           {progressQuery.data && progressQuery.data.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
+            <ul className="divide-y divide-slate-100">
               {progressQuery.data.map((tech) => (
                 <li key={tech.technician.id}>
                   <div className="px-5 py-5 sm:px-6">
                     {/* Tech info header with name */}
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-semibold text-gray-800">
-                        {tech.technician.name} {tech.technician.techId && <span className="text-gray-500">({tech.technician.techId})</span>}
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <h4 className="text-lg font-semibold text-slate-950">
+                        {tech.technician.name} {tech.technician.techId && <span className="text-slate-500">({tech.technician.techId})</span>}
                       </h4>
                       <Link href={`/supervisor/technician/${tech.technician.id}`}>
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="border border-[#4e7ac7] text-[#4e7ac7] bg-white hover:bg-blue-50 rounded-full px-6 py-2 font-medium text-sm"
+                          className="admin-secondary-button px-5"
                         >
                           View QCs
                         </Button>
@@ -187,17 +187,17 @@ export default function Dashboard() {
                     </div>
                     
                     {/* Card for progress data - styled similar to the design */}
-                    <div className="bg-gray-900 rounded-xl p-6 text-white">
-                      <h3 className="text-2xl font-semibold mb-1">Progress</h3>
-                      <p className="text-gray-300 mb-6">
+                    <div className="admin-soft-panel">
+                      <h3 className="mb-1 text-2xl font-semibold text-slate-950">Progress</h3>
+                      <p className="mb-6 text-sm text-slate-500">
                         QC Period: {formatDate(periodQuery.data.startDate)} - {formatDate(periodQuery.data.endDate)}
                       </p>
                       
                       <div className="flex justify-between items-center mb-3">
-                        <span className="text-lg text-gray-200">
+                        <span className="text-base font-medium text-slate-700">
                           Progress: {tech.submittedCount} of {tech.requiredCount} QCs approved
                         </span>
-                        <span className="text-lg font-medium text-white">
+                        <span className="text-lg font-semibold text-teal-700">
                           {Math.round((tech.submittedCount / tech.requiredCount) * 100)}%
                         </span>
                       </div>
@@ -220,19 +220,19 @@ export default function Dashboard() {
             </ul>
           ) : (
             <div className="px-5 py-8 text-center">
-              <p className="text-gray-600 font-medium">No technicians found</p>
-              <p className="text-gray-500 text-sm mt-1">Technicians will appear here once they register in the system</p>
+              <p className="font-medium text-slate-700">No technicians found</p>
+              <p className="mt-1 text-sm text-slate-500">Technicians will appear here once they register in the system</p>
             </div>
           )}
         </div>
 
         {/* QC Review Section */}
-        <div className="mt-8 bg-white shadow-md overflow-hidden rounded-xl border border-gray-100">
-          <div className="px-5 py-5 border-b border-gray-200 sm:px-6">
-            <h3 className="text-xl leading-6 font-medium text-gray-800">
+        <div className="admin-panel mt-8">
+          <div className="admin-panel-header">
+            <h3 className="admin-section-title">
               Pending QC Reviews
             </h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-600">
+            <p className="admin-subtitle max-w-2xl">
               Review and approve technician QC submissions
             </p>
           </div>
@@ -255,13 +255,13 @@ export default function Dashboard() {
               </div>
             </div>
           ) : pendingQCsQuery.data && pendingQCsQuery.data.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
+            <ul className="divide-y divide-slate-100">
               {pendingQCsQuery.data.slice(0, 2).map((qc) => (
                 <li key={qc.id}>
                   <div className="px-5 py-5 sm:px-6">
                     <div>
                       <div>
-                        <h4 className="text-base font-medium text-gray-800 truncate">
+                        <h4 className="truncate text-base font-semibold text-slate-950">
                           Job #{qc.jobId} - {(() => {
                             const technician = progressQuery.data?.find(t => t.technician.id === qc.technicianId)?.technician;
                             return technician ? 
@@ -269,20 +269,20 @@ export default function Dashboard() {
                               'Unknown';
                           })()}
                         </h4>
-                        <p className="mt-1 text-sm text-gray-600">Account #{qc.accountNumber || qc.address}</p>
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-1 text-sm text-slate-600">Account #{qc.accountNumber || qc.address}</p>
+                        <p className="mt-1 text-xs text-slate-500">
                           Submitted on {new Date(qc.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                       
                       <div className="mt-4 flex justify-center space-x-4">
                         <Link href="/supervisor/review">
-                          <Button size="default" className="bg-green-600 hover:bg-green-700 px-6 py-2 font-medium">
+                          <Button size="default" className="admin-success-button px-6">
                             Approve
                           </Button>
                         </Link>
                         <Link href="/supervisor/review">
-                          <Button size="default" variant="outline" className="border-red-500 text-red-500 hover:bg-red-50 px-6 py-2 font-medium">
+                          <Button size="default" variant="outline" className="rounded-2xl border-rose-200 bg-white px-6 font-semibold text-rose-600 hover:bg-rose-50">
                             Decline
                           </Button>
                         </Link>
@@ -292,9 +292,9 @@ export default function Dashboard() {
                     <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
                       {getOnsitePhotoItems(qc).map((image, index) => (
                         <div key={image.title}>
-                          <p className="text-xs font-medium text-gray-600 mb-1">{image.title}</p>
+                          <p className="mb-1 text-xs font-semibold text-slate-500">{image.title}</p>
                           <div
-                            className="h-24 w-full rounded-lg bg-gray-100 relative overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-md hover:opacity-90"
+                            className="admin-thumb relative h-24 w-full cursor-pointer hover:opacity-90"
                             onClick={() => openImageViewer(qc, index)}
                           >
                             <img src={image.url} alt={image.title} className="h-full w-full object-cover" />
@@ -307,7 +307,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline"
                         size="sm" 
-                        className="border border-[#4e7ac7] text-[#4e7ac7] hover:bg-blue-50 font-medium mt-5 w-full rounded-md"
+                        className="admin-secondary-button mt-5 w-full"
                       >
                         Go to QC Review Page
                       </Button>
@@ -318,8 +318,8 @@ export default function Dashboard() {
             </ul>
           ) : (
             <div className="px-5 py-8 text-center">
-              <p className="text-gray-600 font-medium">No pending QCs to review</p>
-              <p className="text-gray-500 text-sm mt-1">New QC submissions will appear here for your review</p>
+              <p className="font-medium text-slate-700">No pending QCs to review</p>
+              <p className="mt-1 text-sm text-slate-500">New QC submissions will appear here for your review</p>
             </div>
           )}
         </div>

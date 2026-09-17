@@ -96,13 +96,13 @@ export default function TechnicianQCSubmissions() {
   
   if (isNaN(technicianId)) {
     return (
-      <div className="container mx-auto py-6">
+      <div className="admin-page">
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Invalid Technician ID</AlertTitle>
           <AlertDescription>
             The provided technician ID is invalid.
-            <Button variant="outline" size="sm" className="mt-2" onClick={goBack}>
+            <Button variant="outline" size="sm" className="admin-secondary-button mt-2" onClick={goBack}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Return to Dashboard
             </Button>
           </AlertDescription>
@@ -113,7 +113,7 @@ export default function TechnicianQCSubmissions() {
   
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 flex justify-center items-center min-h-[50vh]">
+      <div className="admin-page flex min-h-[50vh] items-center justify-center">
         <div className="flex flex-col items-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
           <p className="text-muted-foreground">Loading QC submissions...</p>
@@ -124,13 +124,13 @@ export default function TechnicianQCSubmissions() {
   
   if (error) {
     return (
-      <div className="container mx-auto py-6">
+      <div className="admin-page">
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
             Failed to load QC submissions. Please try again later.
-            <Button variant="outline" size="sm" className="mt-2" onClick={goBack}>
+            <Button variant="outline" size="sm" className="admin-secondary-button mt-2" onClick={goBack}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Return to Dashboard
             </Button>
           </AlertDescription>
@@ -140,18 +140,20 @@ export default function TechnicianQCSubmissions() {
   }
   
   return (
-    <div className="container mx-auto py-6 px-4 space-y-6">
-      <div className="flex items-center mb-6">
-        <Button variant="outline" size="sm" className="mr-4" onClick={goBack}>
+    <div className="admin-page space-y-6">
+      <div className="admin-page-header">
+        <div className="flex items-start gap-3">
+        <Button variant="outline" size="sm" className="admin-secondary-button mt-1" onClick={goBack}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#0A3D73]">
+          <h1 className="admin-title">
             {technician ? `${technician.name} (${technician.techId})` : 'Technician'} QC Submissions
           </h1>
-          <p className="text-[#0A3D73]">
+          <p className="admin-subtitle">
             {submissions?.length || 0} total submissions
           </p>
+        </div>
         </div>
       </div>
       
@@ -186,9 +188,9 @@ export default function TechnicianQCSubmissions() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <FileCheck className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 text-lg font-medium">No QC Submissions</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <FileCheck className="mx-auto h-12 w-12 text-teal-600/70" />
+              <h3 className="mt-4 text-lg font-semibold text-slate-950">No QC Submissions</h3>
+              <p className="mt-2 text-sm text-slate-500">
                 This technician hasn't submitted any QCs yet.
               </p>
             </div>
@@ -210,9 +212,9 @@ export default function TechnicianQCSubmissions() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <FileCheck className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 text-lg font-medium">No Pending Submissions</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <FileCheck className="mx-auto h-12 w-12 text-teal-600/70" />
+              <h3 className="mt-4 text-lg font-semibold text-slate-950">No Pending Submissions</h3>
+              <p className="mt-2 text-sm text-slate-500">
                 There are no pending QC submissions to review.
               </p>
             </div>
@@ -234,9 +236,9 @@ export default function TechnicianQCSubmissions() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <FileCheck className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 text-lg font-medium">No Approved Submissions</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <FileCheck className="mx-auto h-12 w-12 text-emerald-600/70" />
+              <h3 className="mt-4 text-lg font-semibold text-slate-950">No Approved Submissions</h3>
+              <p className="mt-2 text-sm text-slate-500">
                 There are no approved QC submissions.
               </p>
             </div>
@@ -258,9 +260,9 @@ export default function TechnicianQCSubmissions() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <FileCheck className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 text-lg font-medium">No Declined Submissions</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <FileCheck className="mx-auto h-12 w-12 text-rose-600/70" />
+              <h3 className="mt-4 text-lg font-semibold text-slate-950">No Declined Submissions</h3>
+              <p className="mt-2 text-sm text-slate-500">
                 There are no declined QC submissions.
               </p>
             </div>
@@ -292,10 +294,10 @@ function SubmissionCard({
   const images = getQCViewerImages(submission);
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="admin-panel">
       <CardHeader className="pb-2 px-6">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold">Job: {submission.jobId}</CardTitle>
+          <CardTitle className="text-lg font-semibold text-slate-950">Job: {submission.jobId}</CardTitle>
           <StatusBadge status={submission.status} />
         </div>
         <CardDescription className="flex items-center gap-1">
@@ -308,7 +310,7 @@ function SubmissionCard({
           {images.map((image, index) => (
             <div
               key={image.title}
-              className="relative aspect-square bg-background rounded overflow-hidden cursor-pointer"
+              className="admin-thumb relative aspect-square cursor-pointer"
               onClick={() => viewImages(submission, index)}
             >
               <img src={image.url} alt={image.title} className="w-full h-full object-cover hover:opacity-90 transition" />
@@ -317,7 +319,7 @@ function SubmissionCard({
         </div>
         
         {submission.supervisorComment && (
-          <div className="bg-muted p-2 rounded text-sm mb-2">
+          <div className="mb-2 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">
             <p className="font-semibold">Supervisor Comment:</p>
             <p>{submission.supervisorComment}</p>
           </div>
@@ -329,7 +331,7 @@ function SubmissionCard({
         </div>
       </CardContent>
       <CardFooter className="pt-0 px-6">
-        <Button variant="outline" size="sm" className="w-full" onClick={() => viewImages(submission)}>
+        <Button variant="outline" size="sm" className="admin-secondary-button w-full" onClick={() => viewImages(submission)}>
           <ExternalLink className="h-4 w-4 mr-2" />
           View Images
         </Button>

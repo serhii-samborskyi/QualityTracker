@@ -45,7 +45,7 @@ export function SheetContent({ className, children, side: _side, ...props }: Rea
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50">
-      <div className={cn("fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-background p-6 shadow-lg", className)} {...props}>
+      <div className={cn("fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-background p-6 shadow-xl", className)} {...props}>
         <button className="absolute right-4 top-4" onClick={() => context.setOpen(false)}>
           <X className="h-4 w-4" />
         </button>

@@ -26,25 +26,25 @@ export default function QCSubmissionCard({ submission }: {
   const images = getQCViewerImages(submission);
 
   return (
-    <Card>
+    <Card className="admin-panel">
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <CardTitle className="text-lg">Job: {submission.jobId}</CardTitle>
+          <CardTitle className="text-lg text-slate-950">Job: {submission.jobId}</CardTitle>
           <StatusBadge status={submission.status} />
         </div>
-        <p className="text-sm text-muted-foreground">Account {submission.accountNumber || submission.address}</p>
+        <p className="text-sm text-slate-500">Account {submission.accountNumber || submission.address}</p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {images.map(({ title, url }) => (
             <div key={title} className="space-y-1">
-              <p className="text-xs font-medium">{title}</p>
-              <img src={url} alt={title} className="h-24 w-full rounded-md object-cover" />
+              <p className="text-xs font-semibold text-slate-500">{title}</p>
+              <img src={url} alt={title} className="admin-thumb h-24 w-full object-cover" />
             </div>
           ))}
         </div>
         {submission.supervisorComment ? (
-          <p className="mt-4 rounded-md bg-muted p-3 text-sm">{submission.supervisorComment}</p>
+          <p className="mt-4 rounded-2xl bg-slate-50 p-3 text-sm text-slate-700">{submission.supervisorComment}</p>
         ) : null}
       </CardContent>
     </Card>

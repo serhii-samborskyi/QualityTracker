@@ -166,10 +166,10 @@ export default function QCReview() {
 
   if (pendingQCsQuery.isLoading || techniciansQuery.isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900">QC Review</h1>
+      <div className="admin-page">
+        <h1 className="admin-title">QC Review</h1>
         <div className="py-4">
-          <Card className="p-6">
+          <Card className="admin-panel p-6">
             <Skeleton className="h-5 w-48 mb-2" />
             <Skeleton className="h-4 w-64 mb-6" />
             
@@ -206,32 +206,32 @@ export default function QCReview() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">QC Review</h1>
+    <div className="admin-page">
+      <h1 className="admin-title">QC Review</h1>
       
       <div className="py-4">
-        <Card className="bg-white shadow overflow-hidden">
-          <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
-            <div className="flex justify-between items-center">
+        <Card className="admin-panel">
+          <div className="admin-panel-header">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
+                <h3 className="flex items-center text-lg font-semibold leading-6 text-slate-950">
                   Pending QC Reviews
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="ml-2 h-8 w-8 p-0 rounded-full"
+                    className="ml-2 h-9 w-9 rounded-full p-0 text-slate-500 hover:bg-teal-50 hover:text-teal-700"
                     onClick={() => setShowSearch(!showSearch)}
                   >
                     {showSearch ? <X size={18} /> : <Search size={18} />}
                   </Button>
                 </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                <p className="admin-subtitle max-w-2xl">
                   Review and approve technician QC submissions
                 </p>
               </div>
               
               {pendingQCsQuery.data && pendingQCsQuery.data.length > 0 && (
-                <div className="text-sm text-gray-500 font-medium">
+                <div className="rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-700">
                   {pendingQCsQuery.data.length} {pendingQCsQuery.data.length === 1 ? 'submission' : 'submissions'} pending
                 </div>
               )}
@@ -241,14 +241,14 @@ export default function QCReview() {
               <div className="mt-4 flex">
                 <div className="relative flex-grow">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400" />
+                    <Search className="h-5 w-5 text-slate-400" />
                   </div>
                   <Input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by tech name, job number, tech ID, or account number..."
-                    className="pl-10 pr-4 py-2 w-full focus:ring-primary-500 focus:border-primary-500"
+                    className="w-full pl-10 pr-4"
                     autoFocus
                   />
                 </div>
@@ -256,7 +256,7 @@ export default function QCReview() {
                 {searchQuery && (
                   <Button 
                     variant="ghost" 
-                    className="ml-2 p-2" 
+                    className="ml-2 p-2 text-slate-500 hover:bg-slate-100" 
                     onClick={() => setSearchQuery("")}
                     aria-label="Clear search"
                   >
@@ -271,8 +271,8 @@ export default function QCReview() {
             <>
               {/* Search results info */}
               {searchQuery && (
-                <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                  <div className="text-sm text-gray-600">
+                <div className="border-b border-slate-100 bg-slate-50 px-4 py-2">
+                  <div className="text-sm text-slate-600">
                     {filteredSubmissions.length === 0 ? (
                       "No matching submissions found"
                     ) : filteredSubmissions.length === 1 ? (
@@ -286,24 +286,24 @@ export default function QCReview() {
               )}
               
               {filteredSubmissions.length > 0 ? (
-                <ul className="divide-y divide-gray-200">
+                <ul className="divide-y divide-slate-100">
                   {filteredSubmissions.map((qc) => (
                     <li key={qc.id}>
                       <div className="px-4 py-4 sm:px-6">
                         <div>
                           <div>
-                            <h4 className="text-sm font-medium text-blue-600 dark:text-blue-400 truncate">
+                            <h4 className="truncate text-base font-semibold text-slate-950">
                               Job #{qc.jobId} - {getTechnicianName(qc.technicianId)}
                             </h4>
-                            <p className="mt-1 text-sm text-gray-500">Account #{qc.accountNumber || qc.address}</p>
-                            <p className="mt-1 text-xs text-gray-500">
+                            <p className="mt-1 text-sm text-slate-600">Account #{qc.accountNumber || qc.address}</p>
+                            <p className="mt-1 text-xs text-slate-500">
                               Submitted on {formatDate(qc.createdAt)}
                             </p>
                           </div>
                           <div className="mt-3 flex space-x-3">
                             <Button 
                               size="default"
-                              className="bg-green-600 hover:bg-green-700 px-5 py-2 font-medium"
+                              className="admin-success-button px-5"
                               onClick={() => handleReview(qc.id, "approved")}
                               disabled={reviewMutation.isPending}
                             >
@@ -312,7 +312,7 @@ export default function QCReview() {
                             <Button 
                               size="default"
                               variant="destructive"
-                              className="px-5 py-2 font-medium"
+                              className="admin-danger-button px-5"
                               onClick={() => handleReview(qc.id, "declined")}
                               disabled={reviewMutation.isPending}
                             >
@@ -324,9 +324,9 @@ export default function QCReview() {
                         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
                           {getOnsitePhotoItems(qc).map((image, index) => (
                             <div key={image.title}>
-                              <p className="text-xs font-medium text-gray-500 mb-1">{image.title}</p>
+                              <p className="mb-1 text-xs font-semibold text-slate-500">{image.title}</p>
                               <div
-                                className="h-24 w-full rounded bg-gray-200 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
+                                className="admin-thumb relative h-24 w-full cursor-pointer hover:opacity-90"
                                 onClick={() => openImageViewer(qc, index)}
                               >
                                 <img src={image.url} alt={image.title} className="h-full w-full object-cover" />
@@ -336,14 +336,14 @@ export default function QCReview() {
                         </div>
                         
                         <div className="mt-4">
-                          <label htmlFor={`comment-${qc.id}`} className="block text-sm font-medium text-gray-700">Comment</label>
+                          <label htmlFor={`comment-${qc.id}`} className="block text-sm font-semibold text-slate-700">Comment</label>
                           <div className="mt-1">
                             <Textarea
                               id={`comment-${qc.id}`}
                               rows={2}
                               value={comments[qc.id] || ""}
                               onChange={(e) => handleComment(qc.id, e.target.value)}
-                              className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              className="block w-full border-slate-200 shadow-sm sm:text-sm"
                               placeholder="Add a comment (required for declining)"
                               disabled={reviewMutation.isPending}
                             />
@@ -351,9 +351,9 @@ export default function QCReview() {
                         </div>
                         
                         <div className="mt-2">
-                          <p className="text-xs font-medium text-gray-500 mb-1">Job Screenshot</p>
+                          <p className="mb-1 text-xs font-semibold text-slate-500">Job Screenshot</p>
                           <div 
-                            className="mt-1 h-36 w-full rounded bg-gray-100 relative overflow-hidden cursor-pointer transition-all hover:shadow-md hover:opacity-90"
+                            className="admin-thumb relative mt-1 h-36 w-full cursor-pointer hover:opacity-90"
                             onClick={() => openImageViewer(qc, getOnsitePhotoItems(qc).length)}
                           >
                             <img 
@@ -368,13 +368,13 @@ export default function QCReview() {
                   ))}
                 </ul>
               ) : (
-                <div className="px-4 py-6 text-center text-gray-500">
+                <div className="px-4 py-6 text-center text-slate-500">
                   No matching QCs found for your search
                 </div>
               )}
             </>
           ) : (
-            <div className="px-4 py-6 text-center text-gray-500">
+            <div className="px-4 py-6 text-center text-slate-500">
               No pending QCs to review
             </div>
           )}
